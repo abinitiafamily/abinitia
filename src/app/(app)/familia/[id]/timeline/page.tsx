@@ -22,10 +22,37 @@ const EVENT_TYPE_LABELS: Record<string, string> = {
   OTHER: 'Fato Histórico',
 }
 
+const HISTORICAL_CONTEXT: TimelineEvent[] = [
+  {
+    id: 'hist-1',
+    familyId: 'fam-001',
+    title: 'Abolição & Grande Fluxo de Imigração Italiana',
+    type: 'HISTORICAL' as any,
+    date: '1888',
+    location: 'Brasil / Itália',
+    description: 'Promulgação da Lei Áurea no Brasil e incentivo à vinda de famílias italianas para o trabalho fabril e agrícola em São Paulo.',
+    evidenceStatus: 'CONFIRMED',
+    isHistoricalContext: true,
+  },
+  {
+    id: 'hist-2',
+    familyId: 'fam-001',
+    title: 'Eclosão da Primeira Guerra Mundial',
+    type: 'HISTORICAL' as any,
+    date: '1914',
+    location: 'Europa / Itália',
+    description: 'Conflito militar mobiliza jovens na Itália e interrompe correspondências transatlânticas com os parentes no Brasil.',
+    evidenceStatus: 'CONFIRMED',
+    isHistoricalContext: true,
+  },
+]
+
 export default function TimelinePage() {
   const [filterType, setFilterType] = useState<string>('ALL')
+  const [showHistory, setShowHistory] = useState(true)
 
-  const events = [...MOCK_TIMELINE].sort((a, b) => {
+  const allEvents = showHistory ? [...MOCK_TIMELINE, ...HISTORICAL_CONTEXT] : [...MOCK_TIMELINE]
+  const events = allEvents.sort((a, b) => {
     return parseInt(a.date || '0') - parseInt(b.date || '0')
   })
 
@@ -68,6 +95,14 @@ export default function TimelinePage() {
             </button>
           )
         })}
+
+        <button
+          className={`${styles.filterBtn} ${showHistory ? styles.historyActive : ''}`}
+          onClick={() => setShowHistory(h => !h)}
+          title="Alternar contexto histórico nacional e mundial da época"
+        >
+          🏛️ Contexto Histórico: {showHistory ? 'Ativo' : 'Oculto'}
+        </button>
       </div>
 
       {/* Timeline Stream */}

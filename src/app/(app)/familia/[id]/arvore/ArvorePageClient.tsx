@@ -2,7 +2,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import styles from './arvore.module.css'
 import { MOCK_TREE_NODES, MOCK_TREE_EDGES, MOCK_PEOPLE } from '@/lib/mock-data'
-import type { TreeNode, Person, EvidenceStatus } from '@/types'
+import type { TreeNode, TreeEdge, Person, EvidenceStatus } from '@/types'
 
 const EVIDENCE_COLORS: Record<EvidenceStatus, string> = {
   CONFIRMED:    '#5A8040',
@@ -26,6 +26,7 @@ interface NodeData extends TreeNode {
 export default function ArvorePageClient() {
   const svgRef = useRef<SVGSVGElement>(null)
   const [nodes, setNodes] = useState<NodeData[]>(MOCK_TREE_NODES)
+  const [edges, setEdges] = useState<TreeEdge[]>(MOCK_TREE_EDGES)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [dragging, setDragging] = useState<string | null>(null)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
@@ -35,6 +36,69 @@ export default function ArvorePageClient() {
   const [panStart, setPanStart] = useState({ x: 0, y: 0, px: 0, py: 0 })
   const [showPanel, setShowPanel] = useState(false)
   const [filter, setFilter] = useState<'ALL' | EvidenceStatus>('ALL')
+
+  // Add person modal state
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [newFirstName, setNewFirstName] = useState('')
+  const [newLastName, setNewLastName] = useState('Ferraro')
+  const [newBirthYear, setNewBirthYear] = useState('1960')
+  const [newGender, setNewGender] = useState<'M' | 'F'>('M')
+  const [newRelation, setNewRelation] = useState<'CHILD' | 'SPOUSE' | 'PARENT'>('CHILD')
+
+  function handleAddNode() {
+    if (!newFirstName.trim()) return
+    const newId = `p-${Date.now()}`
+    const targetNode = selectedId ? nodes.find(n => n.person.id === selectedId) : nodes[0]
+    const baseX = targetNode ? targetNode.x : 400
+    const baseY = targetNode ? targetNode.y : 300
+
+    let newX = baseX + (Math.random() * 60 - 30)
+    let newY = baseY + 140
+    if (newRelation === 'SPOUSE') {
+      newX = baseX + 160
+      newY = baseY
+    } else if (newRelation === 'PARENT') {
+      newX = baseX
+      newY = Math.max(60, baseY - 140)
+    }
+
+    const newPerson: Person = {
+      id: newId,
+      familyId: 'fam-001',
+      firstName: newFirstName,
+      lastName: newLastName,
+      birthDate: newBirthYear,
+      gender: newGender,
+      evidenceStatus: 'CONFIRMED',
+      createdById: 'user-001',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    const newNode: NodeData = {
+      person: newPerson,
+      x: newX,
+      y: newY,
+      generation: targetNode ? targetNode.generation + (newRelation === 'CHILD' ? 1 : newRelation === 'PARENT' ? -1 : 0) : 1,
+      children: [],
+      parents: targetNode && newRelation === 'CHILD' ? [targetNode.person.id] : [],
+      partners: targetNode && newRelation === 'SPOUSE' ? [targetNode.person.id] : [],
+    }
+
+    setNodes(prev => [...prev, newNode])
+
+    if (targetNode) {
+      const edgeType = newRelation === 'SPOUSE' ? 'SPOUSE' : 'PARENT_CHILD'
+      const fromId = newRelation === 'PARENT' ? newId : targetNode.person.id
+      const toId = newRelation === 'PARENT' ? targetNode.person.id : newId
+      setEdges(prev => [...prev, { from: fromId, to: toId, type: edgeType as any }])
+    }
+
+    setShowAddModal(false)
+    setNewFirstName('')
+    setSelectedId(newId)
+    setShowPanel(true)
+  }
 
   const selectedPerson = selectedId
     ? nodes.find(n => n.person.id === selectedId)?.person
@@ -152,7 +216,13 @@ export default function ArvorePageClient() {
             <button className={styles.zoomBtn} onClick={() => { setScale(1); setPan({ x: 0, y: 0 }) }} id="zoom-fit-btn" title="Ajustar">⊡</button>
           </div>
 
-          <button className="btn btn-primary btn-sm" id="add-person-btn">+ Adicionar pessoa</button>
+          <button
+            className="btn btn-primary btn-sm"
+            id="add-person-btn"
+            onClick={() => setShowAddModal(true)}
+          >
+            + Adicionar pessoa
+          </button>
         </div>
       </div>
 
@@ -188,7 +258,7 @@ export default function ArvorePageClient() {
           <g transform={`translate(${pan.x}, ${pan.y}) scale(${scale})`}>
 
             {/* Edges */}
-            {MOCK_TREE_EDGES.map(edge => {
+            {edges.map(edge => {
               const from = nodes.find(n => n.person.id === edge.from)
               const to   = nodes.find(n => n.person.id === edge.to)
               if (!from || !to) return null
@@ -352,6 +422,99 @@ export default function ArvorePageClient() {
             <div className={styles.panelFooter}>
               <button className="btn btn-primary btn-sm btn-full" id="edit-person-btn">Editar pessoa</button>
               <button className="btn btn-ghost btn-sm btn-full" id="add-relation-btn">+ Relação</button>
+            </div>
+          </div>
+        )}
+
+        {/* Add Person Modal */}
+        {showAddModal && (
+          <div className={styles.modalOverlay} onClick={() => setShowAddModal(false)}>
+            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <div>
+                  <span className={styles.modalPre}>Novo Nó na Árvore Genealógica</span>
+                  <h3 className={styles.modalTitle}>Adicionar Antepassado ou Familiar</h3>
+                </div>
+                <button className={styles.panelClose} onClick={() => setShowAddModal(false)}>✕</button>
+              </div>
+
+              <div className={styles.modalBody}>
+                <div className={styles.formGroup}>
+                  <label className="form-label">Primeiro Nome</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={newFirstName}
+                    onChange={e => setNewFirstName(e.target.value)}
+                    placeholder="Ex: Matteo, Pasquale, Francesca..."
+                    autoFocus
+                  />
+                </div>
+
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className="form-label">Sobrenome</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={newLastName}
+                      onChange={e => setNewLastName(e.target.value)}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className="form-label">Ano de Nascimento</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={newBirthYear}
+                      onChange={e => setNewBirthYear(e.target.value)}
+                      placeholder="Ex: 1890"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className="form-label">Sexo</label>
+                    <select
+                      className="form-select"
+                      value={newGender}
+                      onChange={e => setNewGender(e.target.value as any)}
+                    >
+                      <option value="M">Masculino</option>
+                      <option value="F">Feminino</option>
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className="form-label">Relação com Nó Ativo</label>
+                    <select
+                      className="form-select"
+                      value={newRelation}
+                      onChange={e => setNewRelation(e.target.value as any)}
+                    >
+                      <option value="CHILD">Filho(a)</option>
+                      <option value="SPOUSE">Cônjuge / Parceiro(a)</option>
+                      <option value="PARENT">Pai / Mãe (Ascendente)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.modalFooter}>
+                <button className="btn btn-secondary" onClick={() => setShowAddModal(false)}>
+                  Cancelar
+                </button>
+                <button
+                  className="btn btn-primary"
+                  onClick={handleAddNode}
+                  disabled={!newFirstName.trim()}
+                  id="confirm-add-node-btn"
+                >
+                  Adicionar ao Grafo Familiar
+                </button>
+              </div>
             </div>
           </div>
         )}

@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: '/familia/fam-001/pessoas', icon: '👥', label: 'Pessoas' },
   { href: '/familia/fam-001/timeline', icon: '📅', label: 'Linha do Tempo' },
   { href: '/familia/fam-001/historias', icon: '📖', label: 'Histórias' },
+  { href: '/familia/fam-001/investigacoes', icon: '🔍', label: 'Investigações' },
   { href: '/familia/fam-001/arquivo', icon: '🗂️', label: 'Arquivo' },
   { href: '/familia/fam-001/livro', icon: '📚', label: 'Livro da Família' },
   { href: '/familia/fam-001/membros', icon: '🤝', label: 'Membros' },
@@ -17,8 +18,9 @@ const NAV_ITEMS = [
 ]
 
 const BOTTOM_NAV = [
-  { href: '/busca', icon: '🔍', label: 'Buscar famílias' },
+  { href: '/busca', icon: '🌐', label: 'Buscar famílias' },
   { href: '/convites', icon: '📨', label: 'Convites' },
+  { href: '/familia/fam-001/configuracoes', icon: '⚙️', label: 'Selo & Privacidade' },
 ]
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

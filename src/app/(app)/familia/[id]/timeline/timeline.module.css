@@ -61,6 +61,12 @@
   font-weight: 600;
 }
 
+.historyActive {
+  border-color: var(--clr-amber);
+  color: var(--clr-amber-light);
+  background: rgba(198, 139, 46, 0.15);
+}
+
 /* Timeline Stream */
 .timelineStream {
   position: relative;
