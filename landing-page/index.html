@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ABINITIA — Da origem ao legado | Plataforma Inteligente de Genealogia Familiar</title>
+  <meta name="description" content="ABINITIA transforma memórias, documentos e histórias familiares em uma árvore genealógica viva e em um legado histórico para as próximas gerações. Da origem ao legado." />
+  <meta name="keywords" content="genealogia, árvore genealógica, história familiar, memória, legado, família, ABINITIA" />
+  <meta property="og:title" content="ABINITIA — Da origem ao legado" />
+  <meta property="og:description" content="Plataforma inteligente de genealogia, memória e história familiar." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#1a0f05" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- NAVBAR                                          -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <header class="navbar" id="navbar" role="banner">
+    <nav class="navbar__inner" aria-label="Navegação principal">
+      <a href="#hero" class="navbar__logo" aria-label="ABINITIA - Página inicial">
+        <span class="navbar__logo-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 2 C16 2 8 10 8 18 C8 22.4 11.6 26 16 26 C20.4 26 24 22.4 24 18 C24 10 16 2 16 2Z" fill="url(#tree-grad)" />
+            <path d="M16 26 L16 30" stroke="#C68B2E" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 28 L22 28" stroke="#C68B2E" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 16 C8 16 4 12 6 8" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+            <path d="M24 16 C24 16 28 12 26 8" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+            <defs>
+              <linearGradient id="tree-grad" x1="16" y1="2" x2="16" y2="26" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#C68B2E"/>
+                <stop offset="100%" stop-color="#8B5E1A"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span class="navbar__logo-text">ABINITIA</span>
+      </a>
+
+      <ul class="navbar__links" role="list" id="navbar-links">
+        <li><a href="#como-funciona" class="navbar__link">Como funciona</a></li>
+        <li><a href="#funcionalidades" class="navbar__link">Funcionalidades</a></li>
+        <li><a href="#arvore-demo" class="navbar__link">Árvore</a></li>
+        <li><a href="#privacidade" class="navbar__link">Privacidade</a></li>
+        <li><a href="#busca" class="navbar__link">Buscar Família</a></li>
+      </ul>
+
+      <div class="navbar__actions">
+        <a href="#entrar" class="btn btn--ghost" id="btn-login">Entrar</a>
+        <a href="#comecar" class="btn btn--primary" id="btn-start">Começar grátis</a>
+      </div>
+
+      <button class="navbar__hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="navbar-links">
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- HERO                                            -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="hero" id="hero" aria-labelledby="hero-title">
+      <div class="hero__bg-image" aria-hidden="true"></div>
+      <div class="hero__overlay" aria-hidden="true"></div>
+      <canvas class="hero__particles" id="particles-canvas" aria-hidden="true"></canvas>
+
+      <!-- Árvore SVG animada -->
+      <div class="hero__tree-container" aria-hidden="true">
+        <svg class="hero__tree-svg" id="hero-tree" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg">
+          <!-- Tronco -->
+          <path class="tree-trunk" d="M300 480 L300 320 C300 320 290 300 285 280 C280 260 282 240 285 220" stroke="#7a4a1e" stroke-width="18" fill="none" stroke-linecap="round"/>
+          <!-- Raízes -->
+          <path class="tree-root" d="M300 480 C300 480 260 490 240 480 C220 470 210 485 200 482" stroke="#5a3412" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.7"/>
+          <path class="tree-root" d="M300 480 C300 480 340 490 360 480 C380 470 390 485 400 482" stroke="#5a3412" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.7"/>
+          <path class="tree-root" d="M300 478 C300 478 280 500 265 495" stroke="#5a3412" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.5"/>
+          <path class="tree-root" d="M300 478 C300 478 320 500 335 495" stroke="#5a3412" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.5"/>
+          <!-- Ramos principais -->
+          <path class="tree-branch tree-branch--1" d="M285 280 C260 260 220 250 180 240" stroke="#8B5E1A" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path class="tree-branch tree-branch--2" d="M290 260 C310 240 350 230 390 220" stroke="#8B5E1A" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <!-- Sub-ramos esquerda -->
+          <path class="tree-branch tree-branch--3" d="M180 240 C160 220 140 200 120 190" stroke="#9B6E2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path class="tree-branch tree-branch--4" d="M180 240 C175 215 165 195 155 175" stroke="#9B6E2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path class="tree-branch tree-branch--5" d="M180 240 C195 215 200 195 205 170" stroke="#9B6E2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <!-- Sub-ramos direita -->
+          <path class="tree-branch tree-branch--6" d="M390 220 C410 200 430 185 450 175" stroke="#9B6E2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path class="tree-branch tree-branch--7" d="M390 220 C395 195 400 175 405 155" stroke="#9B6E2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path class="tree-branch tree-branch--8" d="M390 220 C375 195 370 175 360 155" stroke="#9B6E2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <!-- Ramo central superior -->
+          <path class="tree-branch tree-branch--9" d="M285 220 C290 195 295 175 300 150" stroke="#8B5E1A" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path class="tree-branch tree-branch--10" d="M300 150 C285 130 270 115 255 105" stroke="#9B6E2A" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path class="tree-branch tree-branch--11" d="M300 150 C315 130 330 115 345 105" stroke="#9B6E2A" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+          <!-- Nós / Medalhas de pessoas -->
+          <!-- Nó raiz (eu) -->
+          <g class="tree-node tree-node--root" id="node-root">
+            <circle cx="300" cy="350" r="22" fill="url(#gold-grad)" stroke="#C68B2E" stroke-width="2.5"/>
+            <circle cx="300" cy="350" r="18" fill="none" stroke="#F5C842" stroke-width="1" opacity="0.6"/>
+            <text x="300" y="354" text-anchor="middle" fill="#1a0f05" font-size="8" font-family="Playfair Display" font-weight="600">VOCÊ</text>
+          </g>
+          <!-- Pai -->
+          <g class="tree-node tree-node--gen1" id="node-pai">
+            <circle cx="220" cy="265" r="18" fill="url(#amber-grad)" stroke="#C68B2E" stroke-width="2"/>
+            <circle cx="220" cy="265" r="14" fill="none" stroke="#F5C842" stroke-width="0.8" opacity="0.5"/>
+            <text x="220" y="269" text-anchor="middle" fill="#1a0f05" font-size="7" font-family="Playfair Display">Pai</text>
+          </g>
+          <!-- Mãe -->
+          <g class="tree-node tree-node--gen1" id="node-mae">
+            <circle cx="375" cy="250" r="18" fill="url(#amber-grad)" stroke="#C68B2E" stroke-width="2"/>
+            <circle cx="375" cy="250" r="14" fill="none" stroke="#F5C842" stroke-width="0.8" opacity="0.5"/>
+            <text x="375" y="254" text-anchor="middle" fill="#1a0f05" font-size="7" font-family="Playfair Display">Mãe</text>
+          </g>
+          <!-- Avôs -->
+          <g class="tree-node tree-node--gen2" id="node-avo1">
+            <circle cx="140" cy="195" r="15" fill="url(#sepia-grad)" stroke="#9B7040" stroke-width="1.5"/>
+            <text x="140" y="199" text-anchor="middle" fill="#f5ecd7" font-size="6" font-family="Playfair Display">Avô</text>
+          </g>
+          <g class="tree-node tree-node--gen2" id="node-avo2">
+            <circle cx="175" cy="170" r="15" fill="url(#sepia-grad)" stroke="#9B7040" stroke-width="1.5"/>
+            <text x="175" y="174" text-anchor="middle" fill="#f5ecd7" font-size="6" font-family="Playfair Display">Avó</text>
+          </g>
+          <g class="tree-node tree-node--gen2" id="node-avo3">
+            <circle cx="450" cy="178" r="15" fill="url(#sepia-grad)" stroke="#9B7040" stroke-width="1.5"/>
+            <text x="450" y="182" text-anchor="middle" fill="#f5ecd7" font-size="6" font-family="Playfair Display">Avô</text>
+          </g>
+          <g class="tree-node tree-node--gen2" id="node-avo4">
+            <circle cx="405" cy="155" r="15" fill="url(#sepia-grad)" stroke="#9B7040" stroke-width="1.5"/>
+            <text x="405" y="159" text-anchor="middle" fill="#f5ecd7" font-size="6" font-family="Playfair Display">Avó</text>
+          </g>
+          <!-- Bisavôs -->
+          <g class="tree-node tree-node--gen3" id="node-bisavo1">
+            <circle cx="255" cy="105" r="12" fill="url(#ancient-grad)" stroke="#7a5a30" stroke-width="1.2"/>
+            <text x="255" y="109" text-anchor="middle" fill="#f5ecd7" font-size="5.5" font-family="Playfair Display">Bisavô</text>
+          </g>
+          <g class="tree-node tree-node--gen3" id="node-bisavo2">
+            <circle cx="345" cy="105" r="12" fill="url(#ancient-grad)" stroke="#7a5a30" stroke-width="1.2"/>
+            <text x="345" y="109" text-anchor="middle" fill="#f5ecd7" font-size="5.5" font-family="Playfair Display">Bisavó</text>
+          </g>
+
+          <!-- Partículas de luz nas pontas dos ramos -->
+          <circle class="tree-glow" cx="120" cy="190" r="4" fill="#C68B2E" opacity="0.8"/>
+          <circle class="tree-glow" cx="155" cy="175" r="4" fill="#C68B2E" opacity="0.8"/>
+          <circle class="tree-glow" cx="205" cy="170" r="4" fill="#C68B2E" opacity="0.8"/>
+          <circle class="tree-glow" cx="360" cy="155" r="4" fill="#C68B2E" opacity="0.8"/>
+          <circle class="tree-glow" cx="405" cy="155" r="3" fill="#F5C842" opacity="0.7"/>
+          <circle class="tree-glow" cx="450" cy="175" r="3" fill="#F5C842" opacity="0.7"/>
+
+          <!-- Gradientes -->
+          <defs>
+            <radialGradient id="gold-grad" cx="50%" cy="40%">
+              <stop offset="0%" stop-color="#F5E17A"/>
+              <stop offset="100%" stop-color="#C68B2E"/>
+            </radialGradient>
+            <radialGradient id="amber-grad" cx="50%" cy="40%">
+              <stop offset="0%" stop-color="#E8A840"/>
+              <stop offset="100%" stop-color="#8B5E1A"/>
+            </radialGradient>
+            <radialGradient id="sepia-grad" cx="50%" cy="40%">
+              <stop offset="0%" stop-color="#9B7040"/>
+              <stop offset="100%" stop-color="#4A2C17"/>
+            </radialGradient>
+            <radialGradient id="ancient-grad" cx="50%" cy="40%">
+              <stop offset="0%" stop-color="#7a5a30"/>
+              <stop offset="100%" stop-color="#3a1f0a"/>
+            </radialGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+        </svg>
+      </div>
+
+      <div class="hero__content">
+        <div class="hero__badge" aria-label="Slogan">Da origem ao legado</div>
+        <h1 class="hero__title" id="hero-title">
+          Toda família possui<br/>
+          <em>uma história.</em>
+        </h1>
+        <p class="hero__subtitle">
+          A ABINITIA transforma memórias, relatos e documentos familiares em uma
+          <strong>árvore genealógica viva</strong> e em um legado histórico para as próximas gerações.
+        </p>
+        <div class="hero__actions">
+          <a href="#comecar" class="btn btn--primary btn--large" id="hero-cta-start">
+            <span>Começar minha árvore</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#como-funciona" class="btn btn--ghost btn--large" id="hero-cta-learn">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M8 8.5A2 2 0 0 1 12 10c0 1.5-2 2-2 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="16" r="0.75" fill="currentColor"/></svg>
+            <span>Saiba como funciona</span>
+          </a>
+        </div>
+        <div class="hero__stats" aria-label="Estatísticas da plataforma">
+          <div class="hero__stat">
+            <span class="hero__stat-number" data-count="9">9</span>
+            <span class="hero__stat-label">Agentes de IA</span>
+          </div>
+          <div class="hero__stat-divider" aria-hidden="true">·</div>
+          <div class="hero__stat">
+            <span class="hero__stat-number" data-count="35">35</span>
+            <span class="hero__stat-label">Funcionalidades</span>
+          </div>
+          <div class="hero__stat-divider" aria-hidden="true">·</div>
+          <div class="hero__stat">
+            <span class="hero__stat-number">∞</span>
+            <span class="hero__stat-label">Gerações</span>
+          </div>
+        </div>
+      </div>
+
+      <a href="#manifesto" class="hero__scroll" aria-label="Role para baixo">
+        <span class="hero__scroll-text">Descubra</span>
+        <div class="hero__scroll-icon" aria-hidden="true"></div>
+      </a>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- MANIFESTO                                        -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="manifesto" id="manifesto" aria-labelledby="manifesto-title">
+      <div class="manifesto__container">
+        <p class="manifesto__eyebrow">O princípio</p>
+        <h2 class="manifesto__title" id="manifesto-title">
+          Toda memória que se perde<br/>é uma história que deixa de existir.
+        </h2>
+        <div class="manifesto__lines" role="list">
+          <div class="manifesto__line reveal-up" role="listitem">
+            <span class="manifesto__line-dot" aria-hidden="true"></span>
+            <p>Comece onde você estiver.</p>
+          </div>
+          <div class="manifesto__line reveal-up" role="listitem">
+            <span class="manifesto__line-dot" aria-hidden="true"></span>
+            <p>Descubra de onde veio.</p>
+          </div>
+          <div class="manifesto__line reveal-up" role="listitem">
+            <span class="manifesto__line-dot" aria-hidden="true"></span>
+            <p>Conecte quem veio antes.</p>
+          </div>
+          <div class="manifesto__line reveal-up" role="listitem">
+            <span class="manifesto__line-dot" aria-hidden="true"></span>
+            <p>Conte o que foi vivido.</p>
+          </div>
+          <div class="manifesto__line manifesto__line--final reveal-up" role="listitem">
+            <span class="manifesto__line-dot" aria-hidden="true"></span>
+            <p>Preserve para quem ainda virá.</p>
+          </div>
+        </div>
+        <p class="manifesto__brand">ABINITIA — Da origem ao legado.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- COMO FUNCIONA                                   -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="how-it-works" id="como-funciona" aria-labelledby="how-title">
+      <div class="section-container">
+        <div class="section-header reveal-up">
+          <p class="section-eyebrow">O processo</p>
+          <h2 class="section-title" id="how-title">Como a ABINITIA funciona</h2>
+          <p class="section-subtitle">Três momentos mágicos que transformam conversas em legado familiar.</p>
+        </div>
+
+        <div class="steps" role="list">
+          <article class="step reveal-up" role="listitem">
+            <div class="step__number" aria-hidden="true">01</div>
+            <div class="step__icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="22" stroke="url(#step-grad-1)" stroke-width="1.5" opacity="0.4"/>
+                <path d="M16 24 C16 19.6 19.6 16 24 16 C28.4 16 32 19.6 32 24" stroke="#C68B2E" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="24" cy="28" r="4" fill="#C68B2E" opacity="0.8"/>
+                <path d="M20 36 C20 36 22 32 24 32 C26 32 28 36 28 36" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M24 36 L24 40" stroke="#C68B2E" stroke-width="2" stroke-linecap="round"/>
+                <path d="M30 22 C30 22 36 20 38 24" stroke="#9B7040" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/>
+                <defs><linearGradient id="step-grad-1" x1="2" y1="2" x2="46" y2="46"><stop stop-color="#C68B2E"/><stop offset="1" stop-color="#4A2C17"/></linearGradient></defs>
+              </svg>
+            </div>
+            <h3 class="step__title">Converse</h3>
+            <p class="step__desc">
+              O Agente Entrevistador da ABINITIA conversa com você de forma natural — via texto ou áudio — para descobrir a história da sua família. Não é um formulário. É uma conversa.
+            </p>
+            <div class="step__quote">"Vamos começar pelo seu avô. O que você lembra dele?"</div>
+          </article>
+
+          <div class="step__connector" aria-hidden="true">
+            <svg width="60" height="20" viewBox="0 0 60 20"><path d="M0 10 Q30 0 60 10" stroke="#C68B2E" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity="0.5"/></svg>
+          </div>
+
+          <article class="step reveal-up" role="listitem">
+            <div class="step__number" aria-hidden="true">02</div>
+            <div class="step__icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="22" stroke="url(#step-grad-2)" stroke-width="1.5" opacity="0.4"/>
+                <circle cx="24" cy="18" r="5" fill="#C68B2E" opacity="0.9"/>
+                <circle cx="12" cy="30" r="4" fill="#9B7040" opacity="0.7"/>
+                <circle cx="36" cy="30" r="4" fill="#9B7040" opacity="0.7"/>
+                <line x1="24" y1="23" x2="12" y2="26" stroke="#C68B2E" stroke-width="1.5"/>
+                <line x1="24" y1="23" x2="36" y2="26" stroke="#C68B2E" stroke-width="1.5"/>
+                <circle cx="6" cy="38" r="3" fill="#7a5a30" opacity="0.5"/>
+                <circle cx="18" cy="40" r="3" fill="#7a5a30" opacity="0.5"/>
+                <circle cx="30" cy="40" r="3" fill="#7a5a30" opacity="0.5"/>
+                <circle cx="42" cy="38" r="3" fill="#7a5a30" opacity="0.5"/>
+                <line x1="12" y1="34" x2="6" y2="35" stroke="#9B7040" stroke-width="1"/>
+                <line x1="12" y1="34" x2="18" y2="37" stroke="#9B7040" stroke-width="1"/>
+                <line x1="36" y1="34" x2="30" y2="37" stroke="#9B7040" stroke-width="1"/>
+                <line x1="36" y1="34" x2="42" y2="35" stroke="#9B7040" stroke-width="1"/>
+                <defs><linearGradient id="step-grad-2" x1="2" y1="2" x2="46" y2="46"><stop stop-color="#C68B2E"/><stop offset="1" stop-color="#4A2C17"/></linearGradient></defs>
+              </svg>
+            </div>
+            <h3 class="step__title">Construa a Árvore</h3>
+            <p class="step__desc">
+              A IA identifica pessoas, relações, datas e eventos. A árvore cresce automaticamente. Convide familiares para expandir cada ramificação — cada um entra no seu lugar certo.
+            </p>
+            <div class="step__quote">"Encontrei 4 novas informações sobre sua família."</div>
+          </article>
+
+          <div class="step__connector" aria-hidden="true">
+            <svg width="60" height="20" viewBox="0 0 60 20"><path d="M0 10 Q30 0 60 10" stroke="#C68B2E" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity="0.5"/></svg>
+          </div>
+
+          <article class="step reveal-up" role="listitem">
+            <div class="step__number" aria-hidden="true">03</div>
+            <div class="step__icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="22" stroke="url(#step-grad-3)" stroke-width="1.5" opacity="0.4"/>
+                <rect x="14" y="10" width="20" height="28" rx="2" stroke="#C68B2E" stroke-width="1.5" fill="none"/>
+                <line x1="18" y1="17" x2="30" y2="17" stroke="#C68B2E" stroke-width="1.2" opacity="0.7"/>
+                <line x1="18" y1="21" x2="30" y2="21" stroke="#C68B2E" stroke-width="1.2" opacity="0.7"/>
+                <line x1="18" y1="25" x2="26" y2="25" stroke="#C68B2E" stroke-width="1.2" opacity="0.7"/>
+                <circle cx="32" cy="33" r="6" fill="#4A2C17" stroke="#C68B2E" stroke-width="1.5"/>
+                <path d="M29.5 33 L31.5 35 L34.5 30.5" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <defs><linearGradient id="step-grad-3" x1="2" y1="2" x2="46" y2="46"><stop stop-color="#C68B2E"/><stop offset="1" stop-color="#4A2C17"/></linearGradient></defs>
+              </svg>
+            </div>
+            <h3 class="step__title">Preserve o Legado</h3>
+            <p class="step__desc">
+              O Agente Editorial transforma histórias, documentos e memórias em um livro familiar vivo. Cada nova geração continua a obra. A história não termina nunca.
+            </p>
+            <div class="step__quote">"Sua história está começando a tomar forma."</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- FUNCIONALIDADES                                 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="features" id="funcionalidades" aria-labelledby="features-title">
+      <div class="section-container">
+        <div class="section-header reveal-up">
+          <p class="section-eyebrow">A plataforma</p>
+          <h2 class="section-title" id="features-title">Tudo para a história da sua família</h2>
+          <p class="section-subtitle">Um ecossistema completo de ferramentas inteligentes.</p>
+        </div>
+
+        <div class="features__grid">
+          <article class="feature-card reveal-up" tabindex="0">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="10" r="5" fill="#C68B2E" opacity="0.9"/>
+                <circle cx="8" cy="22" r="4" fill="#9B7040" opacity="0.7"/>
+                <circle cx="28" cy="22" r="4" fill="#9B7040" opacity="0.7"/>
+                <line x1="18" y1="15" x2="8" y2="18" stroke="#C68B2E" stroke-width="1.5"/>
+                <line x1="18" y1="15" x2="28" y2="18" stroke="#C68B2E" stroke-width="1.5"/>
+                <circle cx="3" cy="30" r="3" fill="#7a5a30" opacity="0.5"/>
+                <circle cx="13" cy="32" r="3" fill="#7a5a30" opacity="0.5"/>
+                <circle cx="23" cy="32" r="3" fill="#7a5a30" opacity="0.5"/>
+                <circle cx="33" cy="30" r="3" fill="#7a5a30" opacity="0.5"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Árvore Genealógica Viva</h3>
+            <p class="feature-card__desc">Árvore interativa com drag-move, zoom e navegação. Crie nós, conecte relações e expanda ramificações livremente. Visualização em estilo ancestral.</p>
+            <span class="feature-card__tag">Interativo</span>
+          </article>
+
+          <article class="feature-card reveal-up" tabindex="0">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <path d="M8 28 C8 28 8 10 18 6 C28 10 28 28 28 28" stroke="#C68B2E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <circle cx="18" cy="18" r="5" fill="#C68B2E" opacity="0.7"/>
+                <path d="M15 18 L17 20 L22 15" stroke="#1a0f05" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">9 Agentes de IA</h3>
+            <p class="feature-card__desc">Entrevistador, Genealogista, Investigador, Historiador, Revisor, Editor e mais. Uma arquitetura multiagente que trabalha para sua família.</p>
+            <span class="feature-card__tag">Inteligência Artificial</span>
+          </article>
+
+          <article class="feature-card reveal-up" tabindex="0">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <rect x="8" y="12" width="20" height="16" rx="2" stroke="#C68B2E" stroke-width="1.5" fill="none"/>
+                <circle cx="18" cy="20" r="3" fill="#C68B2E" opacity="0.7"/>
+                <path d="M14 32 L18 28 L22 32" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <path d="M12 12 C12 8 24 8 24 12" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <circle cx="30" cy="10" r="4" fill="#9B7040" opacity="0.6"/>
+                <path d="M28.5 10 L30 11.5 L32 8.5" stroke="#f5ecd7" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Captação de Áudio</h3>
+            <p class="feature-card__desc">Grave histórias diretamente pelo app. A IA transcreve, revisa e preserva a essência do relato original — sem perder a voz de quem contou.</p>
+            <span class="feature-card__tag">Áudio & Transcrição</span>
+          </article>
+
+          <article class="feature-card reveal-up" tabindex="0">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <rect x="10" y="6" width="16" height="24" rx="2" stroke="#C68B2E" stroke-width="1.5" fill="none"/>
+                <line x1="14" y1="12" x2="22" y2="12" stroke="#C68B2E" stroke-width="1.2" opacity="0.7"/>
+                <line x1="14" y1="16" x2="22" y2="16" stroke="#C68B2E" stroke-width="1.2" opacity="0.7"/>
+                <line x1="14" y1="20" x2="19" y2="20" stroke="#C68B2E" stroke-width="1.2" opacity="0.7"/>
+                <path d="M20 24 L20 32 L24 28 L28 32 L28 24" stroke="#C68B2E" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Livro Familiar Vivo</h3>
+            <p class="feature-card__desc">O agente editorial constrói capítulos progressivamente. O livro cresce com a família. Cada geração adiciona novos capítulos à história.</p>
+            <span class="feature-card__tag">Editorial</span>
+          </article>
+
+          <article class="feature-card reveal-up" tabindex="0">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <line x1="6" y1="28" x2="30" y2="28" stroke="#C68B2E" stroke-width="1.5"/>
+                <circle cx="10" cy="28" r="3" fill="#C68B2E" opacity="0.9"/>
+                <circle cx="18" cy="28" r="3" fill="#9B7040" opacity="0.7"/>
+                <circle cx="26" cy="28" r="3" fill="#7a5a30" opacity="0.5"/>
+                <line x1="10" y1="28" x2="10" y2="16" stroke="#C68B2E" stroke-width="1" stroke-dasharray="2 2"/>
+                <line x1="18" y1="28" x2="18" y2="20" stroke="#9B7040" stroke-width="1" stroke-dasharray="2 2"/>
+                <line x1="26" y1="28" x2="26" y2="12" stroke="#7a5a30" stroke-width="1" stroke-dasharray="2 2"/>
+                <text x="10" y="13" text-anchor="middle" fill="#C68B2E" font-size="6">1892</text>
+                <text x="18" y="17" text-anchor="middle" fill="#9B7040" font-size="6">1948</text>
+                <text x="26" y="9" text-anchor="middle" fill="#7a5a30" font-size="6">2026</text>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Linha do Tempo</h3>
+            <p class="feature-card__desc">Visualize a trajetória da família ao longo dos séculos. Filtre por pessoa, geração, local ou tipo de acontecimento.</p>
+            <span class="feature-card__tag">Histórico</span>
+          </article>
+
+          <article class="feature-card reveal-up" tabindex="0">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="18" r="12" stroke="#C68B2E" stroke-width="1.5" fill="none"/>
+                <path d="M18 8 L18 18 L24 22" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="28" cy="10" r="5" fill="#4A2C17" stroke="#C68B2E" stroke-width="1.2"/>
+                <path d="M26 10 L28 12 L31 8" stroke="#C68B2E" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Convite e Aprovação</h3>
+            <p class="feature-card__desc">Convide familiares com um link. Cada novo membro solicita sua posição na árvore — e o administrador aprova. Crescimento colaborativo e seguro.</p>
+            <span class="feature-card__tag">Colaboração</span>
+          </article>
+
+          <article class="feature-card reveal-up" tabindex="0">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <rect x="6" y="8" width="24" height="20" rx="2" stroke="#C68B2E" stroke-width="1.5" fill="none"/>
+                <path d="M12 14 L24 14 M12 18 L20 18 M12 22 L22 22" stroke="#C68B2E" stroke-width="1.2" stroke-linecap="round"/>
+                <circle cx="27" cy="8" r="5" fill="#4A2C17" stroke="#C68B2E" stroke-width="1.2"/>
+                <path d="M25 8 L26.5 9.5 L29.5 6" stroke="#C68B2E" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Family Vault</h3>
+            <p class="feature-card__desc">Um cofre privado para documentos, fotos, cartas e certidões. Cada arquivo vinculado a pessoas e eventos específicos da história familiar.</p>
+            <span class="feature-card__tag">Arquivo Seguro</span>
+          </article>
+
+          <article class="feature-card reveal-up" tabindex="0">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="12" r="6" stroke="#C68B2E" stroke-width="1.5" fill="none"/>
+                <path d="M8 30 C8 24 28 24 28 30" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <circle cx="28" cy="10" r="4" fill="#4A2C17" stroke="#9B7040" stroke-width="1.2"/>
+                <path d="M30 8 L28 10 L26 8" stroke="#9B7040" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Motor de Parentesco</h3>
+            <p class="feature-card__desc">Calcula automaticamente a relação entre quaisquer duas pessoas na árvore. De bisavô a sobrinho-neto — todas as relações identificadas e nomeadas.</p>
+            <span class="feature-card__tag">Genealogia</span>
+          </article>
+
+          <article class="feature-card feature-card--highlight reveal-up" tabindex="0">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <path d="M18 4 L20.5 12 L29 12 L22.5 17 L25 25 L18 20 L11 25 L13.5 17 L7 12 L15.5 12 Z" fill="#C68B2E" opacity="0.9"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Pesquisa de Cidadania</h3>
+            <p class="feature-card__desc">Organiza documentos genealógicos, identifica lacunas e aponta quais comprovações ainda são necessárias para processos de cidadania estrangeira.</p>
+            <span class="feature-card__tag">Documentação</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- DEMO DA ÁRVORE                                  -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="tree-demo" id="arvore-demo" aria-labelledby="tree-demo-title">
+      <div class="section-container">
+        <div class="tree-demo__content">
+          <div class="tree-demo__text reveal-up">
+            <p class="section-eyebrow">A árvore</p>
+            <h2 class="section-title" id="tree-demo-title">Uma árvore que cresce com sua família</h2>
+            <p class="section-subtitle">
+              Cada membro da família ocupa seu lugar. Novos ramos se abrem com convites.
+              A árvore é interativa — você arrasta, conecta e expande livremente.
+            </p>
+            <ul class="tree-demo__features" role="list">
+              <li class="tree-demo__feature">
+                <span class="tree-demo__feature-dot" aria-hidden="true"></span>
+                <span>Drag-and-move para reorganizar nós</span>
+              </li>
+              <li class="tree-demo__feature">
+                <span class="tree-demo__feature-dot" aria-hidden="true"></span>
+                <span>Zoom e navegação em árvores grandes</span>
+              </li>
+              <li class="tree-demo__feature">
+                <span class="tree-demo__feature-dot" aria-hidden="true"></span>
+                <span>Crie o tipo de família e mova para a ramificação</span>
+              </li>
+              <li class="tree-demo__feature">
+                <span class="tree-demo__feature-dot" aria-hidden="true"></span>
+                <span>Múltiplas famílias independentes</span>
+              </li>
+              <li class="tree-demo__feature">
+                <span class="tree-demo__feature-dot" aria-hidden="true"></span>
+                <span>Busca e highlight de qualquer pessoa</span>
+              </li>
+            </ul>
+            <a href="#comecar" class="btn btn--primary" id="tree-demo-cta">Criar minha árvore</a>
+          </div>
+
+          <div class="tree-demo__visual reveal-up" aria-label="Preview da árvore interativa">
+            <div class="tree-demo__window">
+              <div class="tree-demo__window-bar" aria-hidden="true">
+                <span class="window-dot window-dot--red"></span>
+                <span class="window-dot window-dot--yellow"></span>
+                <span class="window-dot window-dot--green"></span>
+                <span class="window-title">ABINITIA — Família Silva</span>
+              </div>
+              <div class="tree-demo__canvas" id="demo-canvas" aria-label="Árvore genealógica interativa demonstração">
+                <!-- Mini árvore demo -->
+                <svg class="demo-tree" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Linhas de conexão -->
+                  <line x1="200" y1="70" x2="120" y2="130" stroke="#C68B2E" stroke-width="1.5" opacity="0.6"/>
+                  <line x1="200" y1="70" x2="280" y2="130" stroke="#C68B2E" stroke-width="1.5" opacity="0.6"/>
+                  <line x1="120" y1="150" x2="70" y2="210" stroke="#9B7040" stroke-width="1.2" opacity="0.5"/>
+                  <line x1="120" y1="150" x2="120" y2="210" stroke="#9B7040" stroke-width="1.2" opacity="0.5"/>
+                  <line x1="120" y1="150" x2="170" y2="210" stroke="#9B7040" stroke-width="1.2" opacity="0.5"/>
+                  <line x1="280" y1="150" x2="230" y2="210" stroke="#9B7040" stroke-width="1.2" opacity="0.5"/>
+                  <line x1="280" y1="150" x2="280" y2="210" stroke="#9B7040" stroke-width="1.2" opacity="0.5"/>
+                  <line x1="280" y1="150" x2="330" y2="210" stroke="#9B7040" stroke-width="1.2" opacity="0.5"/>
+
+                  <!-- Bisavô (raiz) -->
+                  <g class="demo-node" id="demo-node-root">
+                    <circle cx="200" cy="55" r="25" fill="url(#demo-gold)" stroke="#C68B2E" stroke-width="2"/>
+                    <circle cx="200" cy="55" r="20" fill="none" stroke="#F5C842" stroke-width="0.8" opacity="0.5"/>
+                    <text x="200" y="51" text-anchor="middle" fill="#1a0f05" font-size="7" font-family="Playfair Display" font-weight="600">João</text>
+                    <text x="200" y="61" text-anchor="middle" fill="#1a0f05" font-size="6" font-family="Inter">Silva</text>
+                  </g>
+
+                  <!-- Geração 2 -->
+                  <g class="demo-node demo-node--dragging" id="demo-node-filho1">
+                    <circle cx="120" cy="135" r="22" fill="url(#demo-amber)" stroke="#C68B2E" stroke-width="1.8"/>
+                    <text x="120" y="131" text-anchor="middle" fill="#1a0f05" font-size="7" font-family="Playfair Display">Carlos</text>
+                    <text x="120" y="141" text-anchor="middle" fill="#1a0f05" font-size="6">Silva</text>
+                  </g>
+                  <g class="demo-node" id="demo-node-filho2">
+                    <circle cx="280" cy="135" r="22" fill="url(#demo-amber)" stroke="#C68B2E" stroke-width="1.8"/>
+                    <text x="280" y="131" text-anchor="middle" fill="#1a0f05" font-size="7" font-family="Playfair Display">Maria</text>
+                    <text x="280" y="141" text-anchor="middle" fill="#1a0f05" font-size="6">Silva</text>
+                  </g>
+
+                  <!-- Geração 3 -->
+                  <g class="demo-node" id="demo-n1"><circle cx="70" cy="218" r="18" fill="url(#demo-sepia)" stroke="#9B7040" stroke-width="1.5"/><text x="70" y="221" text-anchor="middle" fill="#f5ecd7" font-size="6" font-family="Playfair Display">Ana</text></g>
+                  <g class="demo-node" id="demo-n2"><circle cx="120" cy="218" r="18" fill="url(#demo-sepia)" stroke="#9B7040" stroke-width="1.5"/><text x="120" y="221" text-anchor="middle" fill="#f5ecd7" font-size="6" font-family="Playfair Display">Pedro</text></g>
+                  <g class="demo-node" id="demo-n3"><circle cx="170" cy="218" r="18" fill="url(#demo-sepia)" stroke="#9B7040" stroke-width="1.5"/><text x="170" y="221" text-anchor="middle" fill="#f5ecd7" font-size="6" font-family="Playfair Display">Luís</text></g>
+                  <g class="demo-node" id="demo-n4"><circle cx="230" cy="218" r="18" fill="url(#demo-sepia)" stroke="#9B7040" stroke-width="1.5"/><text x="230" y="221" text-anchor="middle" fill="#f5ecd7" font-size="6" font-family="Playfair Display">Rita</text></g>
+                  <g class="demo-node" id="demo-n5"><circle cx="280" cy="218" r="18" fill="url(#demo-sepia)" stroke="#9B7040" stroke-width="1.5"/><text x="280" y="221" text-anchor="middle" fill="#f5ecd7" font-size="6" font-family="Playfair Display">José</text></g>
+                  <g class="demo-node demo-node--new" id="demo-n6">
+                    <circle cx="330" cy="218" r="18" fill="#1a0f05" stroke="#C68B2E" stroke-width="1.5" stroke-dasharray="3 2"/>
+                    <text x="330" y="221" text-anchor="middle" fill="#C68B2E" font-size="14">+</text>
+                  </g>
+
+                  <!-- Tooltip flutuante -->
+                  <g class="demo-tooltip" id="demo-tooltip">
+                    <rect x="60" y="80" width="110" height="42" rx="6" fill="#2d1a08" stroke="#C68B2E" stroke-width="1" opacity="0.95"/>
+                    <text x="115" y="96" text-anchor="middle" fill="#C68B2E" font-size="7" font-family="Playfair Display" font-weight="600">Carlos Silva</text>
+                    <text x="115" y="107" text-anchor="middle" fill="#f5ecd7" font-size="6" font-family="Inter">Filho de João • 1948–2020</text>
+                    <text x="115" y="117" text-anchor="middle" fill="#9B7040" font-size="5.5" font-family="Inter">3 filhos · 12 histórias</text>
+                  </g>
+
+                  <!-- Badge de drag ativo -->
+                  <g class="demo-drag-badge" id="demo-drag-badge">
+                    <rect x="62" y="155" width="60" height="18" rx="9" fill="#C68B2E"/>
+                    <text x="92" y="167" text-anchor="middle" fill="#1a0f05" font-size="7" font-weight="600" font-family="Inter">⬡ Arrastar</text>
+                  </g>
+
+                  <defs>
+                    <radialGradient id="demo-gold" cx="45%" cy="35%"><stop offset="0%" stop-color="#F5E17A"/><stop offset="100%" stop-color="#C68B2E"/></radialGradient>
+                    <radialGradient id="demo-amber" cx="45%" cy="35%"><stop offset="0%" stop-color="#E8A840"/><stop offset="100%" stop-color="#8B5E1A"/></radialGradient>
+                    <radialGradient id="demo-sepia" cx="45%" cy="35%"><stop offset="0%" stop-color="#9B7040"/><stop offset="100%" stop-color="#4A2C17"/></radialGradient>
+                  </defs>
+                </svg>
+                <div class="tree-demo__controls" aria-label="Controles da árvore">
+                  <button class="tree-ctrl-btn" id="demo-zoom-in" aria-label="Aproximar zoom">+</button>
+                  <button class="tree-ctrl-btn" id="demo-zoom-out" aria-label="Afastar zoom">−</button>
+                  <button class="tree-ctrl-btn" id="demo-fit" aria-label="Ajustar ao canvas">⊡</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- AGENTE IA                                       -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="agent-section" id="agente" aria-labelledby="agent-title">
+      <div class="section-container">
+        <div class="agent-section__inner">
+          <div class="agent-chat reveal-up" aria-label="Demonstração do chat com o agente">
+            <div class="agent-chat__header">
+              <div class="agent-chat__avatar" aria-hidden="true">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="16" r="14" fill="url(#agent-grad)"/>
+                  <path d="M10 18 C10 14.7 12.7 12 16 12 C19.3 12 22 14.7 22 18" stroke="#f5ecd7" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                  <circle cx="16" cy="20" r="3" fill="#f5ecd7" opacity="0.8"/>
+                  <defs><radialGradient id="agent-grad" cx="40%" cy="35%"><stop offset="0%" stop-color="#8B5E1A"/><stop offset="100%" stop-color="#2d1205"/></radialGradient></defs>
+                </svg>
+              </div>
+              <div>
+                <p class="agent-chat__name">ABINITIA · Agente Entrevistador</p>
+                <p class="agent-chat__status">
+                  <span class="agent-status-dot" aria-hidden="true"></span>
+                  Ativo agora
+                </p>
+              </div>
+            </div>
+            <div class="agent-chat__messages" role="log" aria-live="polite" aria-label="Conversa com o agente">
+              <div class="chat-msg chat-msg--agent">
+                <p>Olá! Sou o Agente Entrevistador da ABINITIA. Estou aqui para ajudar a construir a história da sua família.</p>
+              </div>
+              <div class="chat-msg chat-msg--agent">
+                <p>Vamos começar pelo que você já conhece. <strong>Quem é a pessoa mais antiga da sua família que você se lembra?</strong></p>
+              </div>
+              <div class="chat-msg chat-msg--user">
+                <p>Meu bisavô, Giuseppe Ferraro. Ele veio da Itália, de Nápoles.</p>
+              </div>
+              <div class="chat-msg chat-msg--agent">
+                <p>Que história fascinante! Giuseppe Ferraro, de Nápoles — já estamos criando o primeiro nó da sua árvore. 🌿</p>
+                <p>Você sabe <strong>aproximadamente quando ele chegou ao Brasil?</strong></p>
+              </div>
+              <div class="chat-msg chat-msg--system" aria-live="polite">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="6" stroke="#C68B2E" stroke-width="1.2"/><path d="M5 7 L6.5 8.5 L9.5 5" stroke="#C68B2E" stroke-width="1.2" stroke-linecap="round"/></svg>
+                <span>Novo nó criado: Giuseppe Ferraro · Nápoles, Itália · Bisavô</span>
+              </div>
+              <div class="chat-msg chat-msg--agent chat-msg--typing">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+              </div>
+            </div>
+            <div class="agent-chat__input-area">
+              <button class="chat-audio-btn" id="chat-audio-btn" aria-label="Gravar áudio">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="7" y="2" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 10 C4 14.4 7 16 10 16 C13 16 16 14.4 16 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/><line x1="10" y1="16" x2="10" y2="19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </button>
+              <input type="text" class="chat-input" id="chat-input" placeholder="Responda por texto ou use o microfone..." aria-label="Mensagem para o agente"/>
+              <button class="chat-send-btn" id="chat-send-btn" aria-label="Enviar mensagem">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M18 2L2 8.5L9.5 11.5L12 19L18 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="agent-section__text reveal-up">
+            <p class="section-eyebrow">O agente</p>
+            <h2 class="section-title" id="agent-title">Uma conversa que vira história</h2>
+            <p class="section-subtitle">
+              O Agente Entrevistador não é um formulário. É uma conversa inteligente que descobre pessoas, 
+              datas e histórias enquanto você fala — por texto ou por voz.
+            </p>
+            <div class="agent-section__stats">
+              <div class="agent-stat">
+                <span class="agent-stat__number">9</span>
+                <span class="agent-stat__label">Agentes especializados</span>
+              </div>
+              <div class="agent-stat">
+                <span class="agent-stat__number">∞</span>
+                <span class="agent-stat__label">Idiomas e histórias</span>
+              </div>
+            </div>
+            <ul class="agent-section__features" role="list">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="#C68B2E" stroke-width="1.2"/><path d="M5 8 L7 10 L11 6" stroke="#C68B2E" stroke-width="1.2" stroke-linecap="round"/></svg>
+                Entrevista por voz ou texto
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="#C68B2E" stroke-width="1.2"/><path d="M5 8 L7 10 L11 6" stroke="#C68B2E" stroke-width="1.2" stroke-linecap="round"/></svg>
+                Transcrição automática e revisão
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="#C68B2E" stroke-width="1.2"/><path d="M5 8 L7 10 L11 6" stroke="#C68B2E" stroke-width="1.2" stroke-linecap="round"/></svg>
+                Identifica pessoas, datas e eventos
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="#C68B2E" stroke-width="1.2"/><path d="M5 8 L7 10 L11 6" stroke="#C68B2E" stroke-width="1.2" stroke-linecap="round"/></svg>
+                Preserva a voz e essência do relato
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- BUSCA PÚBLICA                                   -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="search-section" id="busca" aria-labelledby="search-title">
+      <div class="section-container">
+        <div class="section-header reveal-up">
+          <p class="section-eyebrow">Busca de famílias</p>
+          <h2 class="section-title" id="search-title">Encontre famílias cadastradas</h2>
+          <p class="section-subtitle">Famílias que optaram por visibilidade pública podem ser encontradas por outros usuários.</p>
+        </div>
+
+        <div class="search-box reveal-up" role="search">
+          <div class="search-box__inner">
+            <svg class="search-box__icon" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <circle cx="10" cy="10" r="7" stroke="#9B7040" stroke-width="1.8"/>
+              <path d="M15.5 15.5 L20 20" stroke="#9B7040" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input type="search" class="search-box__input" id="family-search" placeholder="Buscar por sobrenome, origem ou região..." aria-label="Buscar famílias cadastradas"/>
+            <button class="btn btn--primary search-box__btn" id="search-btn">Buscar</button>
+          </div>
+          <div class="search-box__suggestions" role="listbox" id="search-suggestions" aria-label="Sugestões de sobrenomes">
+            <span class="search-suggestion" role="option" tabindex="0">Ferraro</span>
+            <span class="search-suggestion" role="option" tabindex="0">Silva</span>
+            <span class="search-suggestion" role="option" tabindex="0">Pereira</span>
+            <span class="search-suggestion" role="option" tabindex="0">Costa</span>
+            <span class="search-suggestion" role="option" tabindex="0">Souza</span>
+            <span class="search-suggestion" role="option" tabindex="0">Oliveira</span>
+          </div>
+        </div>
+
+        <div class="search-results reveal-up" id="search-results" aria-label="Resultados de busca">
+          <article class="family-card" tabindex="0">
+            <div class="family-card__icon" aria-hidden="true">🌿</div>
+            <div class="family-card__info">
+              <h3 class="family-card__name">Família Ferraro</h3>
+              <p class="family-card__origin">Nápoles, Itália · São Paulo, Brasil</p>
+              <p class="family-card__stats">284 pessoas · 7 gerações · desde 1888</p>
+            </div>
+            <div class="family-card__actions">
+              <span class="family-card__badge">Pública</span>
+              <button class="btn btn--ghost family-card__btn" aria-label="Ver família Ferraro">Ver família</button>
+            </div>
+          </article>
+          <article class="family-card" tabindex="0">
+            <div class="family-card__icon" aria-hidden="true">🌳</div>
+            <div class="family-card__info">
+              <h3 class="family-card__name">Família Silva</h3>
+              <p class="family-card__origin">Minas Gerais, Brasil</p>
+              <p class="family-card__stats">156 pessoas · 5 gerações · desde 1920</p>
+            </div>
+            <div class="family-card__actions">
+              <span class="family-card__badge">Pública</span>
+              <button class="btn btn--ghost family-card__btn" aria-label="Ver família Silva">Ver família</button>
+            </div>
+          </article>
+          <article class="family-card family-card--locked" tabindex="0">
+            <div class="family-card__icon" aria-hidden="true">🔒</div>
+            <div class="family-card__info">
+              <h3 class="family-card__name">Família Costa</h3>
+              <p class="family-card__origin">Porto, Portugal · Rio de Janeiro, Brasil</p>
+              <p class="family-card__stats">Acesso restrito · solicitar convite</p>
+            </div>
+            <div class="family-card__actions">
+              <span class="family-card__badge family-card__badge--private">Privada</span>
+              <button class="btn btn--ghost family-card__btn" aria-label="Solicitar convite família Costa">Solicitar convite</button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- PRIVACIDADE                                     -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="privacy-section" id="privacidade" aria-labelledby="privacy-title">
+      <div class="section-container">
+        <div class="privacy-section__inner">
+          <div class="privacy-section__text reveal-up">
+            <p class="section-eyebrow">Segurança</p>
+            <h2 class="section-title" id="privacy-title">Privacy by Design.<br/>Seus dados, sua família.</h2>
+            <p class="section-subtitle">
+              A ABINITIA foi construída com privacidade como fundação. Seus dados familiares 
+              são tratados como patrimônio privado — nunca expostos sem consentimento explícito.
+            </p>
+            <div class="privacy-badges">
+              <div class="privacy-badge">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 3 L22 6.5 L22 14 C22 19 18 23 14 25 C10 23 6 19 6 14 L6 6.5 Z" stroke="#C68B2E" stroke-width="1.5" fill="none"/><path d="M10 14 L12.5 16.5 L18 11" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <span>Compatível com LGPD</span>
+              </div>
+              <div class="privacy-badge">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect x="6" y="12" width="16" height="12" rx="2" stroke="#C68B2E" stroke-width="1.5" fill="none"/><path d="M10 12 L10 9 C10 6.8 11.8 5 14 5 C16.2 5 18 6.8 18 9 L18 12" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round" fill="none"/><circle cx="14" cy="18" r="2" fill="#C68B2E" opacity="0.7"/></svg>
+                <span>Dados criptografados</span>
+              </div>
+              <div class="privacy-badge">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="10" stroke="#C68B2E" stroke-width="1.5" fill="none"/><path d="M9 14 C9 14 11 9 14 9 C17 9 19 14 19 14 C19 14 17 19 14 19 C11 19 9 14 9 14Z" stroke="#C68B2E" stroke-width="1.2" fill="none"/><circle cx="14" cy="14" r="2.5" fill="#C68B2E" opacity="0.7"/></svg>
+                <span>Compartilhamento opt-in</span>
+              </div>
+              <div class="privacy-badge">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M8 8 L20 8 L20 18 L14 22 L8 18 Z" stroke="#C68B2E" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M12 13 L13.5 14.5 L16.5 11" stroke="#C68B2E" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <span>Permissões granulares</span>
+              </div>
+            </div>
+          </div>
+          <div class="privacy-section__visual reveal-up" aria-hidden="true">
+            <div class="vault-visual">
+              <div class="vault-visual__ring vault-visual__ring--1"></div>
+              <div class="vault-visual__ring vault-visual__ring--2"></div>
+              <div class="vault-visual__ring vault-visual__ring--3"></div>
+              <div class="vault-visual__center">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                  <path d="M32 8 L48 14 L48 32 C48 44 40 54 32 58 C24 54 16 44 16 32 L16 14 Z" fill="url(#vault-grad)" stroke="#C68B2E" stroke-width="1.5"/>
+                  <path d="M24 32 L29 37 L40 26" stroke="#f5ecd7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <defs><linearGradient id="vault-grad" x1="16" y1="8" x2="48" y2="58" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4A2C17"/><stop offset="100%" stop-color="#1a0f05"/></linearGradient></defs>
+                </svg>
+                <p class="vault-visual__label">Family Vault</p>
+              </div>
+              <!-- Floating items -->
+              <div class="vault-item vault-item--1">📜</div>
+              <div class="vault-item vault-item--2">📸</div>
+              <div class="vault-item vault-item--3">🎙️</div>
+              <div class="vault-item vault-item--4">📋</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- DEPOIMENTOS                                     -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="testimonials" id="depoimentos" aria-labelledby="testimonials-title">
+      <div class="section-container">
+        <div class="section-header reveal-up">
+          <p class="section-eyebrow">Histórias reais</p>
+          <h2 class="section-title" id="testimonials-title">O que famílias descobrem</h2>
+        </div>
+        <div class="testimonials__grid">
+          <article class="testimonial-card reveal-up" tabindex="0">
+            <div class="testimonial-card__quote" aria-hidden="true">"</div>
+            <p class="testimonial-card__text">
+              Minha avó nunca havia contado detalhes sobre a chegada da família ao Brasil. Através do agente, ela conversou por 40 minutos. A ABINITIA transformou tudo em um capítulo que todos nós choramos ao ler.
+            </p>
+            <footer class="testimonial-card__author">
+              <div class="testimonial-card__avatar" aria-hidden="true">C</div>
+              <div>
+                <p class="testimonial-card__name">Carolina Ferraro</p>
+                <p class="testimonial-card__role">São Paulo, SP · Família Ferraro desde 1888</p>
+              </div>
+            </footer>
+          </article>
+
+          <article class="testimonial-card reveal-up" tabindex="0">
+            <div class="testimonial-card__quote" aria-hidden="true">"</div>
+            <p class="testimonial-card__text">
+              Quando meu primo aceitou o convite e a plataforma localizou exatamente onde ele se encaixava na árvore — como neto do meu bisavô por outro ramo — fiquei sem palavras. Foi mágico.
+            </p>
+            <footer class="testimonial-card__author">
+              <div class="testimonial-card__avatar" aria-hidden="true">R</div>
+              <div>
+                <p class="testimonial-card__name">Roberto Almeida</p>
+                <p class="testimonial-card__role">Belo Horizonte, MG · Família Almeida desde 1920</p>
+              </div>
+            </footer>
+          </article>
+
+          <article class="testimonial-card reveal-up" tabindex="0">
+            <div class="testimonial-card__quote" aria-hidden="true">"</div>
+            <p class="testimonial-card__text">
+              Estávamos tentando obter a cidadania italiana há anos. A ABINITIA nos ajudou a organizar toda a documentação genealógica e identificar exatamente quais comprovantes ainda faltavam.
+            </p>
+            <footer class="testimonial-card__author">
+              <div class="testimonial-card__avatar" aria-hidden="true">L</div>
+              <div>
+                <p class="testimonial-card__name">Luciana Rossi</p>
+                <p class="testimonial-card__role">Porto Alegre, RS · Família Rossi desde 1895</p>
+              </div>
+            </footer>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- CTA FINAL                                       -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="cta-section" id="comecar" aria-labelledby="cta-title">
+      <div class="cta-section__bg" aria-hidden="true"></div>
+      <div class="cta-section__container">
+        <div class="cta-section__content reveal-up">
+          <p class="section-eyebrow section-eyebrow--light">Comece hoje</p>
+          <h2 class="cta-section__title" id="cta-title">
+            Sua família tem uma história.<br/>
+            <em>Está na hora de preservá-la.</em>
+          </h2>
+          <p class="cta-section__subtitle">
+            Crie sua conta gratuitamente e inicie a árvore genealógica da sua família agora mesmo.
+            Cada memória que você salva hoje, as próximas gerações vão agradecer.
+          </p>
+          <div class="cta-section__actions">
+            <a href="#" class="btn btn--cta btn--large" id="cta-final-start">
+              <span>Começar minha história</span>
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M5 11h12M11 5l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <p class="cta-section__disclaimer">Grátis para começar · Sem cartão de crédito · Cancele quando quiser</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- FOOTER                                          -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <a href="#hero" class="footer__logo" aria-label="ABINITIA">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><path d="M16 2 C16 2 8 10 8 18 C8 22.4 11.6 26 16 26 C20.4 26 24 22.4 24 18 C24 10 16 2 16 2Z" fill="url(#footer-tree-grad)"/><path d="M16 26 L16 30" stroke="#C68B2E" stroke-width="2" stroke-linecap="round"/><path d="M10 28 L22 28" stroke="#C68B2E" stroke-width="2" stroke-linecap="round"/><defs><linearGradient id="footer-tree-grad" x1="16" y1="2" x2="16" y2="26" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#C68B2E"/><stop offset="100%" stop-color="#8B5E1A"/></linearGradient></defs></svg>
+          <span>ABINITIA</span>
+        </a>
+        <p class="footer__tagline">Da origem ao legado.</p>
+        <p class="footer__desc">Plataforma inteligente de genealogia, memória e história familiar.</p>
+      </div>
+      <nav class="footer__nav" aria-label="Links do rodapé">
+        <div class="footer__nav-col">
+          <h4 class="footer__nav-title">Plataforma</h4>
+          <ul role="list">
+            <li><a href="#como-funciona">Como funciona</a></li>
+            <li><a href="#funcionalidades">Funcionalidades</a></li>
+            <li><a href="#arvore-demo">Árvore Genealógica</a></li>
+            <li><a href="#agente">Agente IA</a></li>
+          </ul>
+        </div>
+        <div class="footer__nav-col">
+          <h4 class="footer__nav-title">Família</h4>
+          <ul role="list">
+            <li><a href="#busca">Buscar famílias</a></li>
+            <li><a href="#privacidade">Family Vault</a></li>
+            <li><a href="#comecar">Criar família</a></li>
+            <li><a href="#depoimentos">Histórias</a></li>
+          </ul>
+        </div>
+        <div class="footer__nav-col">
+          <h4 class="footer__nav-title">Legal</h4>
+          <ul role="list">
+            <li><a href="#">Privacidade</a></li>
+            <li><a href="#">Termos de uso</a></li>
+            <li><a href="#">LGPD</a></li>
+            <li><a href="#">Cookies</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer__bottom">
+      <p>© 2026 ABINITIA. Todos os direitos reservados.</p>
+      <p>Construído com memória, propósito e inteligência.</p>
+    </div>
+  </footer>
+
+  <!-- Mobile menu overlay -->
+  <div class="mobile-overlay" id="mobile-overlay" aria-hidden="true"></div>
+
+  <!-- Scripts -->
+  <script src="js/main.js" defer></script>
+  <script src="js/tree-animation.js" defer></script>
+</body>
+</html>

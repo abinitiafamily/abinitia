@@ -1,0 +1,200 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  color: var(--clr-parchment);
+  margin-bottom: var(--sp-1);
+}
+
+.subtitle {
+  color: var(--clr-muted);
+  font-size: 0.95rem;
+}
+
+.filterBar {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  padding: var(--sp-3);
+  border-radius: var(--rad-lg);
+}
+
+.filterBtn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--clr-parchment-dim);
+  padding: 6px 14px;
+  border-radius: var(--rad-md);
+  font-size: 0.825rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filterBtn:hover {
+  background: rgba(198, 139, 46, 0.1);
+  color: var(--clr-amber-light);
+}
+
+.filterActive {
+  background: var(--clr-amber);
+  color: #120b04;
+  font-weight: 600;
+}
+
+/* Timeline Stream */
+.timelineStream {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+  padding: var(--sp-6) 0;
+}
+
+.centralLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--clr-sepia), var(--clr-amber), var(--clr-sepia), transparent);
+  transform: translateX(-50%);
+}
+
+.eventItem {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.eventLeft {
+  justify-content: flex-start;
+  padding-right: 50%;
+}
+
+.eventRight {
+  justify-content: flex-end;
+  padding-left: 50%;
+}
+
+.eventDot {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--clr-surface-high);
+  border: 2px solid var(--clr-amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  z-index: 2;
+  box-shadow: 0 0 12px rgba(198, 139, 46, 0.3);
+}
+
+.eventCard {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--rad-lg);
+  padding: var(--sp-5);
+  width: calc(100% - 40px);
+  margin: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
+
+.eventCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--clr-amber);
+}
+
+.eventYearBadge {
+  font-family: var(--font-title);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--clr-amber-light);
+}
+
+.eventTitle {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  color: var(--clr-parchment);
+  margin: 0;
+}
+
+.eventLocation {
+  font-size: 0.85rem;
+  color: var(--clr-muted);
+}
+
+.eventDesc {
+  font-size: 0.9rem;
+  color: var(--clr-parchment-dim);
+  line-height: 1.5;
+  margin: var(--sp-1) 0;
+}
+
+.peopleList {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-top: var(--sp-1);
+}
+
+.personTag {
+  background: rgba(198, 139, 46, 0.1);
+  border: 1px solid rgba(198, 139, 46, 0.25);
+  color: var(--clr-amber-light);
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: var(--rad-sm);
+}
+
+.eventFooter {
+  margin-top: var(--sp-2);
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .centralLine {
+    left: 20px;
+  }
+  .eventLeft, .eventRight {
+    padding-left: 50px;
+    padding-right: 0;
+    justify-content: flex-start;
+  }
+  .eventDot {
+    left: 20px;
+  }
+  .eventCard {
+    width: 100%;
+    margin: 0;
+  }
+}

@@ -1,0 +1,256 @@
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  color: var(--clr-parchment);
+  margin-bottom: var(--sp-1);
+}
+
+.subtitle {
+  color: var(--clr-muted);
+  font-size: 0.95rem;
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--sp-5);
+}
+
+.card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--rad-lg);
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--clr-amber);
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.bookBadge {
+  font-size: 0.75rem;
+  color: var(--clr-amber-light);
+  font-weight: 500;
+}
+
+.cardTitle {
+  font-family: var(--font-title);
+  font-size: 1.2rem;
+  color: var(--clr-parchment);
+  margin: 0;
+}
+
+.cardContent {
+  font-size: 0.9rem;
+  color: var(--clr-parchment-dim);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.associatedList {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.personTag {
+  background: rgba(198, 139, 46, 0.08);
+  border: 1px solid rgba(198, 139, 46, 0.2);
+  color: var(--clr-amber-light);
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: var(--rad-sm);
+}
+
+.cardFooter {
+  margin-top: auto;
+  padding-top: var(--sp-3);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.dateLabel {
+  color: var(--clr-muted);
+}
+
+.readMore {
+  color: var(--clr-amber);
+  font-weight: 500;
+}
+
+/* Reader Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: var(--sp-4);
+  animation: fadeIn 0.2s ease;
+}
+
+.modalContent {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--rad-xl);
+  max-width: 680px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  animation: scaleUp 0.2s var(--ease-out);
+  max-height: 85vh;
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modalHeader {
+  padding: var(--sp-5);
+  border-bottom: 1px solid var(--clr-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.modalPre {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--clr-amber-light);
+}
+
+.modalTitle {
+  font-family: var(--font-title);
+  font-size: 1.4rem;
+  color: var(--clr-parchment);
+  margin: 4px 0 0 0;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--clr-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.closeBtn:hover {
+  color: var(--clr-parchment);
+}
+
+.modalTabs {
+  display: flex;
+  border-bottom: 1px solid var(--clr-border);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.modalTab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 12px 16px;
+  color: var(--clr-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.modalTabActive {
+  color: var(--clr-amber);
+  border-bottom-color: var(--clr-amber);
+  background: rgba(198, 139, 46, 0.05);
+  font-weight: 600;
+}
+
+.modalBody {
+  padding: var(--sp-6);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.narrativeText {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--clr-parchment);
+  margin: 0;
+}
+
+.rawAlert {
+  font-size: 0.8rem;
+  color: var(--clr-amber-light);
+  background: rgba(198, 139, 46, 0.1);
+  padding: 8px 12px;
+  border-radius: var(--rad-md);
+  margin-bottom: var(--sp-4);
+}
+
+.rawText {
+  font-family: monospace;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--clr-parchment-dim);
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--sp-4);
+  border-radius: var(--rad-md);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.modalFooter {
+  padding: var(--sp-4) var(--sp-5);
+  border-top: 1px solid var(--clr-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+}

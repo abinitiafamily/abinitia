@@ -1,0 +1,197 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  color: var(--clr-parchment);
+  margin-bottom: var(--sp-1);
+}
+
+.subtitle {
+  color: var(--clr-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.alert {
+  background: rgba(90, 128, 64, 0.15);
+  border: 1px solid var(--clr-olive);
+  color: #a8db8c;
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--rad-lg);
+  font-size: 0.9rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.emptyBox {
+  background: var(--clr-surface);
+  border: 1px dashed var(--clr-border);
+  border-radius: var(--rad-xl);
+  padding: var(--sp-12);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.emptyIcon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(90, 128, 64, 0.15);
+  color: var(--clr-olive);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+}
+
+.emptyTitle {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  color: var(--clr-parchment);
+  margin: 0;
+}
+
+.emptyDesc {
+  color: var(--clr-muted);
+  font-size: 0.9rem;
+  max-width: 440px;
+  margin: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.requestCard {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border-glow);
+  border-radius: var(--rad-xl);
+  padding: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--clr-surface-high);
+  border: 1px solid var(--clr-amber);
+  color: var(--clr-amber-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-title);
+  font-weight: 700;
+}
+
+.senderInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.senderName {
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  color: var(--clr-parchment);
+  margin: 0;
+}
+
+.senderEmail {
+  font-size: 0.8rem;
+  color: var(--clr-muted);
+}
+
+.connectionBlock {
+  background: rgba(0, 0, 0, 0.2);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--rad-md);
+  border: 1px solid var(--clr-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.blockLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--clr-muted);
+}
+
+.targetPersonRow {
+  font-size: 0.9rem;
+  color: var(--clr-parchment-dim);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.targetName {
+  color: var(--clr-amber-light);
+}
+
+.messageBox {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.messageText {
+  font-size: 0.95rem;
+  color: var(--clr-parchment);
+  font-style: italic;
+  line-height: 1.6;
+  background: rgba(198, 139, 46, 0.05);
+  border-left: 3px solid var(--clr-amber);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: 0 var(--rad-md) var(--rad-md) 0;
+  margin: 0;
+}
+
+.cardFooter {
+  padding-top: var(--sp-3);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+.dateLabel {
+  font-size: 0.8rem;
+  color: var(--clr-muted);
+}
+
+.actions {
+  display: flex;
+  gap: var(--sp-3);
+}

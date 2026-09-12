@@ -1,0 +1,137 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  color: var(--clr-parchment);
+  margin-bottom: var(--sp-1);
+}
+
+.subtitle {
+  color: var(--clr-muted);
+  font-size: 0.95rem;
+}
+
+.filterBar {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  padding: var(--sp-3);
+  border-radius: var(--rad-lg);
+}
+
+.filterBtn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--clr-parchment-dim);
+  padding: 6px 14px;
+  border-radius: var(--rad-md);
+  font-size: 0.825rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterBtn:hover {
+  background: rgba(198, 139, 46, 0.1);
+  color: var(--clr-amber-light);
+}
+
+.filterActive {
+  background: var(--clr-amber);
+  color: #120b04;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sp-5);
+}
+
+.card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--rad-lg);
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--clr-amber);
+}
+
+.cardIcon {
+  font-size: 2.2rem;
+  width: 56px;
+  height: 56px;
+  background: rgba(198, 139, 46, 0.08);
+  border: 1px solid rgba(198, 139, 46, 0.2);
+  border-radius: var(--rad-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.formatTag {
+  font-size: 0.75rem;
+  color: var(--clr-muted);
+}
+
+.itemTitle {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  color: var(--clr-parchment);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.personTag {
+  font-size: 0.8rem;
+  color: var(--clr-amber-light);
+}
+
+.dateText {
+  font-size: 0.75rem;
+  color: var(--clr-muted);
+}
+
+.cardFooter {
+  margin-top: auto;
+  padding-top: var(--sp-3);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+}
