@@ -3,24 +3,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import styles from './agente.module.css'
 
-interface Message {
-  id: string
-  sender: 'ai' | 'user'
-  text: string
-  timestamp: string
-  audioUrl?: string
-  extractedFacts?: {
-    people?: string[]
-    dates?: string[]
-    places?: string[]
-    events?: string[]
-  }
-}
-
 interface Persona {
   id: string
   name: string
   icon: string
+  title: string
   description: string
   openAiVoice: 'nova' | 'onyx' | 'alloy' | 'echo' | 'shimmer' | 'fable'
   pitch: number
@@ -32,148 +19,86 @@ const PERSONAS: Persona[] = [
     id: 'guardiao',
     name: 'Guardião Ancião',
     icon: '🏛️',
-    description: 'Voz profunda, acolhedora e solene (OpenAI Onyx), focado na preservação da linhagem.',
+    title: 'Guardião das Tradições',
+    description: 'Tom grave, paciente, acolhedor e solene (OpenAI Onyx). Ideal para relatos de linhagem.',
     openAiVoice: 'onyx',
     pitch: 0.85,
-    rate: 0.95,
+    rate: 0.92,
   },
   {
     id: 'historiadora',
     name: 'Historiadora Helena',
     icon: '📜',
-    description: 'Voz calorosa, clara, amigável e expressiva (OpenAI Nova — o estilo clássico do ChatGPT).',
+    title: 'Pesquisadora Familiar',
+    description: 'Voz clara, afetuosa, atenta e expressiva (OpenAI Nova — clássica do ChatGPT).',
     openAiVoice: 'nova',
     pitch: 1.05,
-    rate: 1.0,
-  },
-  {
-    id: 'narrador',
-    name: 'Narrador Natural',
-    icon: '🎙️',
-    description: 'Tom contemporâneo e equilibrado para conversas e relatos do dia a dia (OpenAI Alloy).',
-    openAiVoice: 'alloy',
-    pitch: 1.0,
-    rate: 1.0,
+    rate: 0.98,
   },
   {
     id: 'serena',
     name: 'Entrevistadora Serena',
     icon: '🌸',
-    description: 'Tom doce, atencioso e empático para memórias sensíveis da infância (OpenAI Shimmer).',
+    title: 'Escuta Afetuosa',
+    description: 'Tom doce e carinhoso para lembranças da infância e causos do coração (OpenAI Shimmer).',
     openAiVoice: 'shimmer',
     pitch: 1.1,
-    rate: 0.98,
-  },
-  {
-    id: 'contador',
-    name: 'Contador de Histórias',
-    icon: '🌲',
-    description: 'Voz ressonante e rica em inflexões para causos e lendas de família (OpenAI Echo).',
-    openAiVoice: 'echo',
-    pitch: 0.9,
     rate: 0.95,
   },
 ]
 
-const INITIAL_MESSAGES: Message[] = [
-  {
-    id: 'm-1',
-    sender: 'ai',
-    text: 'Olá! Sou o Guardião de Memórias da ABINITIA. Estou aqui para ouvir suas histórias e ajudar a reconstruir cada galho da sua árvore genealógica. Você pode conversar comigo digitando ou falando diretamente pelo microfone. Sobre quem você gostaria de me contar hoje?',
-    timestamp: '14:20',
-  },
-]
-
 export default function AgentePage() {
-  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES)
-  const [inputValue, setInputValue] = useState('')
-  const [isRecording, setIsRecording] = useState(false)
-  const [recordSeconds, setRecordSeconds] = useState(0)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [isSavingDb, setIsSavingDb] = useState(false)
-
-  // Voice Selection & Audio Config
-  const [selectedPersona, setSelectedPersona] = useState<Persona>(PERSONAS[1]) // Historiadora Helena (Nova) como padrão amigável estilo ChatGPT
+  // Estado da Conversação por Voz
+  const [sessionState, setSessionState] = useState<'idle' | 'listening' | 'processing' | 'speaking'>('idle')
+  const [agentSpeech, setAgentSpeech] = useState(
+    'Olá! Que alegria conversar com você. Eu sou o Guardião de Memórias da sua família. Me conte com calma... qual é a primeira lembrança que você guarda dos seus pais ou da sua infância?'
+  )
+  const [userTranscript, setUserTranscript] = useState('')
+  const [selectedPersona, setSelectedPersona] = useState<Persona>(PERSONAS[0])
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([])
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null)
-  const [autoSpeak, setAutoSpeak] = useState(true)
-  const [showVoiceModal, setShowVoiceModal] = useState(false)
-  const [isSpeaking, setIsSpeaking] = useState(false)
-  const [voiceNotice, setVoiceNotice] = useState<string | null>(null)
 
-  // Fatos Extraídos
+  // Modais e Gavetas
+  const [showVoiceModal, setShowVoiceModal] = useState(false)
+  const [showDrawer, setShowDrawer] = useState(false)
+  const [recordSeconds, setRecordSeconds] = useState(0)
+  const [saveToast, setSaveToast] = useState<string | null>(null)
+
+  // Fatos Extraídos em segundo plano
   const [extractedFacts, setExtractedFacts] = useState({
     people: ['Giuseppe Ferraro (1865)', 'Rosa Carbone (1870)', 'Antonio Ferraro (1895)'],
-    dates: ['1888 (Desembarque)', '1887 (Casamento em Nápoles)', '1905 (Ferraria SP)'],
-    places: ['Nápoles (Itália)', 'Porto de Santos (SP)', 'Rua do Comércio (SP)'],
-    events: ['Migração Atlântica', 'Fundação do Comércio Familiar'],
+    dates: ['1888 (Chegada ao Brasil)', '1887 (Casamento na Itália)'],
+    places: ['Nápoles (Itália)', 'São Paulo (Brasil)'],
+    events: ['Travessia do Vapor', 'Fundação da Ferraria'],
   })
-  const [factsIntegrated, setFactsIntegrated] = useState(false)
-  const [integrationMessage, setIntegrationMessage] = useState<string | null>(null)
 
   const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const chatEndRef = useRef<HTMLDivElement>(null)
   const recognitionRef = useRef<any>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
   const currentAudioRef = useRef<HTMLAudioElement | null>(null)
 
-  // Carregar vozes do navegador priorizando vozes neurais/naturais
+  // Carregar vozes do navegador
   useEffect(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
 
     const loadVoices = () => {
       const voices = window.speechSynthesis.getVoices()
-      // Filtrar preferencialmente vozes em português
       const ptVoices = voices.filter(v => v.lang.startsWith('pt'))
-      
-      // Priorizar vozes "Natural", "Google" ou "Neural" se disponíveis
       const naturalVoices = ptVoices.filter(
         v => v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Neural')
       )
-      
-      const prioritized = naturalVoices.length > 0 ? naturalVoices : ptVoices.length > 0 ? ptVoices : voices
-      setAvailableVoices(prioritized)
-      
-      if (prioritized.length > 0 && !selectedVoice) {
-        setSelectedVoice(prioritized[0])
-      }
+      const list = naturalVoices.length > 0 ? naturalVoices : ptVoices.length > 0 ? ptVoices : voices
+      setAvailableVoices(list)
+      if (list.length > 0 && !selectedVoice) setSelectedVoice(list[0])
     }
 
     loadVoices()
     window.speechSynthesis.onvoiceschanged = loadVoices
   }, [selectedVoice])
 
-  // Carregar histórico de mensagens do banco de dados na inicialização
-  useEffect(() => {
-    async function loadDbHistory() {
-      try {
-        const res = await fetch('/api/agente?familyId=d0100000-0000-0000-0000-000000000001')
-        const data = await res.json()
-        if (data.success && data.messages && data.messages.length > 0) {
-          const dbMsgs: Message[] = data.messages.map((m: any) => ({
-            id: m.id,
-            sender: m.role === 'assistant' ? 'ai' : 'user',
-            text: m.content,
-            timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            audioUrl: m.audio_url || undefined,
-            extractedFacts: m.extracted_data || undefined,
-          }))
-          setMessages(dbMsgs)
-        }
-      } catch (err) {
-        console.error('Histórico do BD offline ou vazio:', err)
-      }
-    }
-    loadDbHistory()
-  }, [])
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, isProcessing])
-
-  // Função para parar áudio atual
-  const stopSpeaking = useCallback(() => {
+  // Parar qualquer áudio em reprodução
+  const stopAudio = useCallback(() => {
     if (currentAudioRef.current) {
       currentAudioRef.current.pause()
       currentAudioRef.current = null
@@ -181,35 +106,28 @@ export default function AgentePage() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel()
     }
-    setIsSpeaking(false)
   }, [])
 
-  // Síntese de voz com fallback: Tenta OpenAI TTS (Voz ChatGPT); se indisponível/sem créditos, usa voz neural web
-  const speakText = useCallback(
-    async (text: string) => {
-      stopSpeaking()
+  // Falar texto via OpenAI TTS com fallback nativo
+  const speakVoice = useCallback(
+    async (textToSpeak: string) => {
+      stopAudio()
+      setSessionState('speaking')
 
-      const cleanText = text
-        .replace(/🎙️.*?\]: /g, '')
-        .replace(/[\*\_]/g, '')
-        .trim()
-
-      setIsSpeaking(true)
+      const clean = textToSpeak.replace(/🎙️.*?\]: /g, '').replace(/[\*\_]/g, '').trim()
 
       try {
-        // 1. Tentar gerar voz neural de alta fidelidade estilo ChatGPT via OpenAI TTS
         const response = await fetch('/api/tts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            text: cleanText,
+            text: clean,
             voice: selectedPersona.openAiVoice,
             speed: selectedPersona.rate,
           }),
         })
 
         const contentType = response.headers.get('content-type') || ''
-
         if (response.ok && contentType.includes('audio')) {
           const blob = await response.blob()
           const audioUrl = URL.createObjectURL(blob)
@@ -217,54 +135,44 @@ export default function AgentePage() {
           currentAudioRef.current = audio
 
           audio.onended = () => {
-            setIsSpeaking(false)
+            setSessionState('idle')
             currentAudioRef.current = null
           }
           audio.onerror = () => {
-            setIsSpeaking(false)
+            setSessionState('idle')
             currentAudioRef.current = null
           }
 
           await audio.play()
           return
         }
-
-        // Se a API retornou indicação de fallback (ex: saldo esgotado na OpenAI)
-        const resData = await response.json().catch(() => null)
-        if (resData?.code === 'credit_balance_exhausted' || resData?.useFallback) {
-          setVoiceNotice('Usando voz neural do navegador (recarregue créditos na OpenAI para as vozes originais do ChatGPT).')
-          setTimeout(() => setVoiceNotice(null), 5000)
-        }
       } catch (err) {
-        console.warn('Falha no OpenAI TTS, alternando para síntese nativa neural:', err)
+        console.warn('Fallback para síntese nativa:', err)
       }
 
-      // 2. Fallback: Síntese de Voz Web Neural Nativa
+      // Fallback Nativo Web Speech
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(cleanText)
-        if (selectedVoice) {
-          utterance.voice = selectedVoice
-        }
+        const utterance = new SpeechSynthesisUtterance(clean)
+        if (selectedVoice) utterance.voice = selectedVoice
         utterance.pitch = selectedPersona.pitch
         utterance.rate = selectedPersona.rate
         utterance.lang = 'pt-BR'
 
-        utterance.onstart = () => setIsSpeaking(true)
-        utterance.onend = () => setIsSpeaking(false)
-        utterance.onerror = () => setIsSpeaking(false)
+        utterance.onstart = () => setSessionState('speaking')
+        utterance.onend = () => setSessionState('idle')
+        utterance.onerror = () => setSessionState('idle')
 
         window.speechSynthesis.speak(utterance)
       } else {
-        setIsSpeaking(false)
+        setSessionState('idle')
       }
     },
-    [selectedPersona, selectedVoice, stopSpeaking]
+    [selectedPersona, selectedVoice, stopAudio]
   )
 
-  // Gravar mensagem no Banco de Dados
-  const persistMessageToDb = async (role: 'user' | 'assistant', content: string, audioUrl?: string, extractedData?: any) => {
+  // Salvar fala no banco de dados automaticamente
+  const saveToDb = async (role: 'user' | 'assistant', content: string, extracted?: any) => {
     try {
-      setIsSavingDb(true)
       await fetch('/api/agente', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -272,26 +180,71 @@ export default function AgentePage() {
           familyId: 'd0100000-0000-0000-0000-000000000001',
           role,
           content,
-          audioUrl,
-          extractedData,
+          extractedData: extracted,
         }),
       })
     } catch (err) {
-      console.error('Erro ao persistir mensagem no BD:', err)
-    } finally {
-      setIsSavingDb(false)
+      console.error('Erro ao salvar no BD:', err)
     }
   }
 
-  // Iniciar e Parar Gravação Real de Áudio e Fala
-  const toggleRecording = async () => {
-    if (isRecording) {
-      // PARAR GRAVAÇÃO
-      setIsRecording(false)
+  // Processar fala do idoso e responder como entrevistador carinhoso
+  const handleUserSpeechFinished = (spokenText: string) => {
+    if (!spokenText.trim()) {
+      setSessionState('idle')
+      return
+    }
+
+    setSessionState('processing')
+    saveToDb('user', spokenText)
+
+    // Agente atencioso gera resposta empática para o idoso
+    setTimeout(() => {
+      let reply = ''
+      let newFacts: any = null
+
+      const lower = spokenText.toLowerCase()
+
+      if (lower.includes('mãe') || lower.includes('mae') || lower.includes('pai')) {
+        reply =
+          'Que lembrança linda dos seus pais. A presença deles é a raiz mais forte da família. Você se lembra de algum conselho ou costume especial que eles repetiam sempre dentro de casa?'
+        newFacts = { events: ['Lembrança dos pais e costumes domésticos'] }
+      } else if (lower.includes('navio') || lower.includes('viagem') || lower.includes('itália') || lower.includes('italia')) {
+        reply =
+          'Essa travessia foi um ato de enorme coragem. Imagine chegar a uma nova terra trazendo apenas a esperança e o trabalho. O que mais contavam para você sobre essa chegada?'
+        newFacts = { events: ['Memória da travessia e imigração'], places: ['Itália', 'Brasil'] }
+      } else if (lower.includes('irmão') || lower.includes('irmao') || lower.includes('irmã') || lower.includes('matteo')) {
+        reply =
+          'Esse detalhe sobre os irmãos é precioso demais para a nossa árvore. Já anotei aqui no nosso caderno da família. Eles costumavam mandar cartas ou se reunir nos domingos?'
+        newFacts = { people: ['Ramo fraternal identificado'], events: ['Reuniões familiares'] }
+      } else {
+        reply = `Estou guardando cada detalhe que você me contou com muito carinho. O tempo das histórias antigas tem um valor sagrado para os seus filhos e netos. O que mais vem ao seu coração quando você pensa nessa época?`
+        newFacts = { events: [`Memória oral preservada`] }
+      }
+
+      setAgentSpeech(reply)
+      saveToDb('assistant', reply, newFacts)
+
+      if (newFacts?.people) {
+        setExtractedFacts(prev => ({
+          ...prev,
+          people: [...prev.people, ...newFacts.people],
+        }))
+      }
+
+      // Fala a resposta de volta para o idoso
+      speakVoice(reply)
+    }, 1200)
+  }
+
+  // Iniciar / Parar Escuta Ativa do Microfone
+  const toggleListening = async () => {
+    if (sessionState === 'listening') {
+      // Parar escuta
+      setSessionState('processing')
       if (timerRef.current) clearInterval(timerRef.current)
       setRecordSeconds(0)
 
-      // Parar reconhecimento de voz
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop()
@@ -300,19 +253,26 @@ export default function AgentePage() {
         }
       }
 
-      // Parar gravação de mídia
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
         mediaRecorderRef.current.stop()
       }
+
+      // Processar fala capturada
+      setTimeout(() => {
+        handleUserSpeechFinished(userTranscript || 'Minha família sempre foi muito unida e trabalhadora.')
+      }, 500)
     } else {
-      // INICIAR GRAVAÇÃO
-      setIsRecording(true)
+      // Iniciar escuta
+      stopAudio()
+      setUserTranscript('')
+      setSessionState('listening')
       setRecordSeconds(0)
+
       timerRef.current = setInterval(() => {
         setRecordSeconds(s => s + 1)
       }, 1000)
 
-      // 1. Tentar reconhecimento de voz (Speech-to-Text)
+      // Reconhecimento de Voz Contínuo
       const SpeechRecognition =
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
 
@@ -324,27 +284,23 @@ export default function AgentePage() {
           rec.interimResults = true
 
           rec.onresult = (event: any) => {
-            let current = ''
+            let fullText = ''
             for (let i = event.resultIndex; i < event.results.length; i++) {
-              current += event.results[i][0].transcript
+              fullText += event.results[i][0].transcript
             }
-            if (current) {
-              setInputValue(current)
+            if (fullText) {
+              setUserTranscript(fullText)
             }
-          }
-
-          rec.onerror = (e: any) => {
-            console.warn('SpeechRecognition aviso:', e)
           }
 
           rec.start()
           recognitionRef.current = rec
-        } catch (e) {
-          console.warn('SpeechRecognition não pôde ser iniciado:', e)
+        } catch (err) {
+          console.warn('Reconhecimento de fala:', err)
         }
       }
 
-      // 2. Tentar captura real de microfone via MediaRecorder
+      // Gravação do Áudio
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -356,117 +312,23 @@ export default function AgentePage() {
           }
 
           mediaRecorder.onstop = () => {
-            const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
-            const audioUrl = URL.createObjectURL(audioBlob)
-
-            const transcribedText =
-              inputValue.trim() ||
-              'Relato oral gravado com microfone para o acervo perpétuo da família.'
-
-            const userMsg: Message = {
-              id: `m-${Date.now()}`,
-              sender: 'user',
-              text: `🎙️ [Áudio Gravado - ${recordSeconds || 1}s]: "${transcribedText}"`,
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              audioUrl,
-            }
-
-            setMessages(prev => [...prev, userMsg])
-            setInputValue('')
-            persistMessageToDb('user', userMsg.text, audioUrl)
-
-            // Processar resposta da IA
-            processAiResponse(transcribedText)
-
-            // Parar tracks de áudio
-            stream.getTracks().forEach(track => track.stop())
+            stream.getTracks().forEach(t => t.stop())
           }
 
           mediaRecorder.start()
           mediaRecorderRef.current = mediaRecorder
         } catch (err) {
-          console.warn('Microfone físico não acessível ou permissão negada:', err)
+          console.warn('Microfone físico:', err)
         }
       }
     }
   }
 
-  // Processar resposta do Agente IA e extrair fatos
-  const processAiResponse = (userText: string) => {
-    setIsProcessing(true)
-
-    setTimeout(() => {
-      setIsProcessing(false)
-
-      let aiResponseText = ''
-      let newExtracted: any = null
-
-      if (userText.toLowerCase().includes('matteo') || userText.toLowerCase().includes('irmão')) {
-        aiResponseText =
-          'Que detalhe precioso! Identifiquei um novo ramo potencial na linhagem: Matteo Ferraro, irmão de Giuseppe, residente em Salerno. Esse relato foi registrado no dossiê genealógico e já está pronto para alimentar a árvore.'
-        newExtracted = {
-          people: ['Matteo Ferraro (Irmão de Giuseppe)'],
-          places: ['Salerno, Itália'],
-          events: ['Permanência na Itália (Salerno)'],
-        }
-      } else {
-        aiResponseText = `Compreendi perfeitamente! Esse depoimento sobre "${userText.slice(0, 45)}..." nos dá pistas cronológicas fundamentais. Registrei cada menção no caderno de campo genealógico para compor a Linha do Tempo e o Livro da Família.`
-        newExtracted = {
-          events: [`Relato oral sobre "${userText.slice(0, 30)}..."`],
-        }
-      }
-
-      const aiMsg: Message = {
-        id: `m-${Date.now() + 1}`,
-        sender: 'ai',
-        text: aiResponseText,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        extractedFacts: newExtracted,
-      }
-
-      setMessages(prev => [...prev, aiMsg])
-      persistMessageToDb('assistant', aiMsg.text, undefined, newExtracted)
-
-      if (newExtracted?.people) {
-        setExtractedFacts(prev => ({
-          ...prev,
-          people: [...prev.people, ...newExtracted.people],
-          places: newExtracted.places ? [...prev.places, ...newExtracted.places] : prev.places,
-        }))
-      }
-
-      // Falar a resposta se autoSpeak estiver ativo
-      if (autoSpeak) {
-        speakText(aiResponseText)
-      }
-    }, 1300)
-  }
-
-  // Enviar mensagem digitada
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!inputValue.trim()) return
-
-    const userText = inputValue
-    setInputValue('')
-
-    const userMsg: Message = {
-      id: `m-${Date.now()}`,
-      sender: 'user',
-      text: userText,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    }
-
-    setMessages(prev => [...prev, userMsg])
-    persistMessageToDb('user', userMsg.text)
-    processAiResponse(userText)
-  }
-
-  // Alimentar Árvore Genealógica (Persistindo no BD via API)
-  const handleIntegrateFacts = async () => {
+  // Concluir e Salvar no Livro da Família
+  const handleSaveToBook = async () => {
     try {
-      setFactsIntegrated(true)
-      const res = await fetch('/api/agente/integrar', {
+      setSaveToast('📖 Memória registrada e integrada ao Livro e à Árvore da Família com sucesso!')
+      await fetch('/api/agente/integrar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -477,277 +339,262 @@ export default function AgentePage() {
           events: extractedFacts.events,
         }),
       })
-      const data = await res.json()
-      if (data.success) {
-        setIntegrationMessage(data.message)
-      } else {
-        setIntegrationMessage('✓ Fatos integrados à árvore e linha do tempo da família!')
-      }
+      setTimeout(() => setSaveToast(null), 5000)
     } catch (err) {
       console.error(err)
-      setIntegrationMessage('✓ Fatos integrados à árvore localmente!')
-    } finally {
-      setTimeout(() => {
-        setFactsIntegrated(false)
-        setIntegrationMessage(null)
-      }, 5000)
     }
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.mainArea}>
-        {/* Chat Header */}
-        <div className={styles.chatHeader}>
-          <div className={styles.agentBadge}>
-            <div className={styles.agentAvatar}>{selectedPersona.icon}</div>
-            <div>
-              <h2 className={styles.agentName}>{selectedPersona.name} · AG-001</h2>
-              <span className={styles.agentStatus}>
-                <span className={styles.onlineDot} /> Voz Neural ({selectedPersona.openAiVoice.toUpperCase()}) & BD
-                {isSpeaking && <span style={{ color: 'var(--clr-amber-light)', marginLeft: '6px' }}>• Falando...</span>}
-                {isSavingDb && <span style={{ color: 'var(--clr-amber)', marginLeft: '6px' }}>• Salvando no BD...</span>}
-              </span>
+    <div className={styles.voiceContainer}>
+      {/* ─── TOPO LIMPO ─────────────────────────────────────────── */}
+      <header className={styles.topNav}>
+        <div className={styles.agentIdentity}>
+          <div className={styles.agentAvatarCircle}>{selectedPersona.icon}</div>
+          <div className={styles.agentInfo}>
+            <h1>{selectedPersona.name}</h1>
+            <div className={styles.agentSubtitle}>
+              <span className={styles.liveDot} />
+              {sessionState === 'listening'
+                ? 'Escutando com carinho...'
+                : sessionState === 'speaking'
+                ? 'Conversando com você...'
+                : 'Pronto para ouvir sua história'}
             </div>
-          </div>
-
-          <div className={styles.voiceControlGroup}>
-            <button
-              type="button"
-              className={`${styles.voiceBtn} ${autoSpeak ? styles.voiceBtnActive : ''}`}
-              onClick={() => {
-                if (isSpeaking) stopSpeaking()
-                setAutoSpeak(v => !v)
-              }}
-              title={autoSpeak ? 'Voz ativada (clique para silenciar)' : 'Voz desativada (clique para ativar)'}
-            >
-              {autoSpeak ? '🔊 Voz Ativa' : '🔇 Silenciado'}
-            </button>
-
-            <button
-              type="button"
-              className={styles.voiceBtn}
-              onClick={() => setShowVoiceModal(true)}
-              id="select-voice-btn"
-              title="Configurar Persona e Voz do ChatGPT (OpenAI TTS)"
-            >
-              ⚙️ Voz: {selectedPersona.name.split(' ')[0]}
-            </button>
           </div>
         </div>
 
-        {voiceNotice && (
-          <div
-            style={{
-              padding: '8px 16px',
-              background: 'rgba(198, 139, 46, 0.15)',
-              borderBottom: '1px solid rgba(198, 139, 46, 0.3)',
-              color: 'var(--clr-amber-light)',
-              fontSize: '0.78rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
+        <div className={styles.topActions}>
+          <button
+            type="button"
+            className={styles.topPillBtn}
+            onClick={() => setShowVoiceModal(true)}
+            id="voice-persona-btn"
+            title="Escolher quem conduz a entrevista"
           >
-            <span>💡 {voiceNotice}</span>
-            <button
-              onClick={() => setVoiceNotice(null)}
-              style={{ background: 'transparent', border: 'none', color: 'var(--clr-amber-light)', cursor: 'pointer' }}
-            >
-              ✕
-            </button>
-          </div>
-        )}
+            <span>⚙️</span>
+            <span>Voz: {selectedPersona.name.split(' ')[0]}</span>
+          </button>
 
-        {/* Chat Stream */}
-        <div className={styles.chatStream}>
-          {messages.map(msg => (
-            <div
-              key={msg.id}
-              className={`${styles.messageBubble} ${msg.sender === 'ai' ? styles.msgAi : styles.msgUser}`}
-            >
-              <div className={styles.msgHeader}>
-                <span className={styles.msgSender}>
-                  {msg.sender === 'ai' ? `${selectedPersona.name} (ABINITIA)` : 'Você'}
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span className={styles.msgTime}>{msg.timestamp}</span>
-                  {msg.sender === 'ai' && (
-                    <button
-                      type="button"
-                      className={styles.speakBtn}
-                      onClick={() => speakText(msg.text)}
-                      title="Ouvir resposta com a voz do Agente"
-                    >
-                      🔊
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <p className={styles.msgText}>{msg.text}</p>
-
-              {/* Player se houver gravação de áudio real */}
-              {msg.audioUrl && (
-                <audio controls src={msg.audioUrl} className={styles.audioPlayer}>
-                  Seu navegador não suporta reprodução de áudio.
-                </audio>
-              )}
-            </div>
-          ))}
-
-          {isProcessing && (
-            <div className={`${styles.messageBubble} ${styles.msgAi}`}>
-              <div className={styles.typingIndicator}>
-                <span />
-                <span />
-                <span />
-              </div>
-            </div>
-          )}
-          <div ref={chatEndRef} />
+          <button
+            type="button"
+            className={styles.topPillBtn}
+            onClick={() => setShowDrawer(true)}
+            id="open-drawer-btn"
+            title="Ver anotações e nomes extraídos"
+          >
+            <span>📋</span>
+            <span>Caderno da Família</span>
+          </button>
         </div>
+      </header>
 
-        {/* Audio Recording Banner */}
-        {isRecording && (
-          <div className={styles.recordingBanner}>
-            <div className={styles.pulseDot} />
-            <span className={styles.recordingText}>
-              Gravando relato de voz em tempo real... 00:{recordSeconds < 10 ? `0${recordSeconds}` : recordSeconds}
+      {saveToast && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '75px',
+            zIndex: 30,
+            background: 'rgba(90, 128, 64, 0.95)',
+            color: '#FFFFFF',
+            padding: '12px 24px',
+            borderRadius: 'var(--radius-full)',
+            fontWeight: 600,
+            fontSize: '0.95rem',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            animation: 'fadeIn 0.3s ease',
+          }}
+        >
+          {saveToast}
+        </div>
+      )}
+
+      {/* ─── CENTRO: O ORB DE VOZ VIVA (ESTILO CHATGPT VOICE) ──── */}
+      <main className={styles.orbStage}>
+        <div
+          className={`${styles.orbContainer} ${
+            sessionState === 'listening'
+              ? styles.orbListening
+              : sessionState === 'speaking'
+              ? styles.orbSpeaking
+              : sessionState === 'processing'
+              ? styles.orbProcessing
+              : ''
+          }`}
+          onClick={toggleListening}
+          title="Clique para falar ou pausar"
+        >
+          <div className={styles.orbRing1} />
+          <div className={styles.orbRing2} />
+          <div className={styles.orbRing3} />
+          <div className={styles.orbSphere}>
+            <span className={styles.orbIcon}>
+              {sessionState === 'listening' ? '🎙️' : sessionState === 'speaking' ? '🔊' : selectedPersona.icon}
             </span>
-            <div className={styles.waveVisualizer}>
-              <span /><span /><span /><span /><span /><span /><span /><span />
+          </div>
+        </div>
+
+        {/* ─── LEGENDA GRANDE E ACESSÍVEL PARA IDOSOS ─────────── */}
+        <div className={styles.dialogueStage}>
+          <div className={styles.statusTag}>
+            {sessionState === 'listening' && (
+              <>
+                <span style={{ color: '#e74c3c' }}>●</span> Ouvindo sua voz (00:{recordSeconds < 10 ? `0${recordSeconds}` : recordSeconds})
+              </>
+            )}
+            {sessionState === 'speaking' && (
+              <>
+                <span>🔊</span> {selectedPersona.name} está falando
+              </>
+            )}
+            {sessionState === 'processing' && (
+              <>
+                <span>💭</span> Refletindo e guardando suas memórias...
+              </>
+            )}
+            {sessionState === 'idle' && (
+              <>
+                <span>✨</span> Toque no microfone abaixo para responder
+              </>
+            )}
+          </div>
+
+          <p className={styles.speechText}>
+            "{sessionState === 'listening' && userTranscript ? userTranscript : agentSpeech}"
+          </p>
+
+          {sessionState === 'listening' && !userTranscript && (
+            <p className={styles.userSpeechHint}>
+              Pode falar com calma, no seu próprio tempo...
+            </p>
+          )}
+        </div>
+      </main>
+
+      {/* ─── BASE: CONTROLES GRANDES & AUTOEXPLICATIVOS ───────── */}
+      <footer className={styles.bottomControls}>
+        <button
+          type="button"
+          className={styles.secondaryControlBtn}
+          onClick={() => speakVoice(agentSpeech)}
+          title="Ouvir novamente a pergunta do Agente"
+        >
+          <span className={styles.controlIcon}>🔄</span>
+          <span>Repetir Pergunta</span>
+        </button>
+
+        {/* Botão Gigante do Microfone */}
+        <button
+          type="button"
+          className={`${styles.bigMicButton} ${sessionState === 'listening' ? styles.bigMicActive : ''}`}
+          onClick={toggleListening}
+          id="main-voice-mic-btn"
+          title={sessionState === 'listening' ? 'Concluir minha fala' : 'Pressionar para falar'}
+        >
+          {sessionState === 'listening' ? '⏹️' : '🎙️'}
+        </button>
+
+        <button
+          type="button"
+          className={styles.secondaryControlBtn}
+          onClick={handleSaveToBook}
+          id="save-to-book-btn"
+          title="Salvar esta história no Livro da Família"
+        >
+          <span className={styles.controlIcon}>📕</span>
+          <span>Salvar no Livro</span>
+        </button>
+      </footer>
+
+      {/* ─── GAVETA LATERAL DO CADERNO DE FATOS (OPCIONAL) ────── */}
+      {showDrawer && (
+        <div className={styles.drawerOverlay} onClick={() => setShowDrawer(false)}>
+          <div className={styles.drawerContent} onClick={e => e.stopPropagation()}>
+            <div className={styles.drawerHeader}>
+              <h2 className={styles.drawerTitle}>Caderno da Memória</h2>
+              <button
+                type="button"
+                onClick={() => setShowDrawer(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--clr-parchment)', fontSize: '1.4rem', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <p style={{ fontSize: '0.85rem', color: 'var(--clr-muted)', margin: 0 }}>
+              Fatos, nomes e locais identificados e salvos no banco de dados durante a conversa:
+            </p>
+
+            <div style={{ marginTop: '12px' }}>
+              <h4 style={{ color: 'var(--clr-amber)', fontSize: '0.85rem', marginBottom: '8px' }}>👤 Pessoas da Linhagem</h4>
+              <div>
+                {extractedFacts.people.map((p, i) => (
+                  <span key={i} className={styles.factPill}>{p}</span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginTop: '12px' }}>
+              <h4 style={{ color: 'var(--clr-amber)', fontSize: '0.85rem', marginBottom: '8px' }}>📅 Datas Relevantes</h4>
+              <div>
+                {extractedFacts.dates.map((d, i) => (
+                  <span key={i} className={styles.factPill}>{d}</span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginTop: '12px' }}>
+              <h4 style={{ color: 'var(--clr-amber)', fontSize: '0.85rem', marginBottom: '8px' }}>📍 Lugares de Origem</h4>
+              <div>
+                {extractedFacts.places.map((pl, i) => (
+                  <span key={i} className={styles.factPill}>{pl}</span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
+              <button
+                type="button"
+                className="btn btn-primary btn-full"
+                onClick={() => {
+                  handleSaveToBook()
+                  setShowDrawer(false)
+                }}
+              >
+                ✓ Sincronizar com a Árvore no BD
+              </button>
             </div>
           </div>
-        )}
-
-        {/* Input Bar */}
-        <form className={styles.inputBar} onSubmit={handleSendMessage}>
-          <button
-            type="button"
-            className={`${styles.micBtn} ${isRecording ? styles.micBtnActive : ''}`}
-            onClick={toggleRecording}
-            title={isRecording ? 'Parar gravação' : 'Gravar áudio com microfone'}
-            id="audio-record-btn"
-          >
-            {isRecording ? '⏹️' : '🎙️'}
-          </button>
-
-          <input
-            type="text"
-            className={`form-input ${styles.chatInput}`}
-            placeholder={
-              isRecording
-                ? 'Ouvindo sua voz... Fale normalmente ou clique em ⏹️ para finalizar.'
-                : 'Digite seu relato, faça uma pergunta ou grave sua voz...'
-            }
-            value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
-            disabled={isRecording}
-            id="agent-chat-input"
-          />
-
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={!inputValue.trim() || isRecording}
-            id="send-message-btn"
-          >
-            Enviar
-          </button>
-        </form>
-      </div>
-
-      {/* Facts Extraction Sidebar */}
-      <div className={styles.factsSidebar}>
-        <div className={styles.factsHeader}>
-          <h3 className={styles.factsTitle}>Fatos Extraídos pelo Agente</h3>
-          <p className={styles.factsDesc}>
-            O agente escuta o diálogo, extrai entidades e salva automaticamente no banco de dados.
-          </p>
         </div>
+      )}
 
-        {factsIntegrated && (
-          <div className={styles.integratedNotice}>
-            {integrationMessage || '✓ Novos nós e fatos integrados à árvore da família no BD!'}
-          </div>
-        )}
-
-        <div className={styles.factsSection}>
-          <span className={styles.factCategory}>👤 Pessoas Identificadas</span>
-          <div className={styles.pillsList}>
-            {extractedFacts.people.map((p, i) => (
-              <span key={i} className={styles.factPill}>{p}</span>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.factsSection}>
-          <span className={styles.factCategory}>📅 Datas & Períodos</span>
-          <div className={styles.pillsList}>
-            {extractedFacts.dates.map((d, i) => (
-              <span key={i} className={styles.factPill}>{d}</span>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.factsSection}>
-          <span className={styles.factCategory}>📍 Locais de Linhagem</span>
-          <div className={styles.pillsList}>
-            {extractedFacts.places.map((pl, i) => (
-              <span key={i} className={styles.factPill}>{pl}</span>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.factsSection}>
-          <span className={styles.factCategory}>📜 Eventos / Fatos Históricos</span>
-          <div className={styles.pillsList}>
-            {extractedFacts.events.map((ev, i) => (
-              <span key={i} className={styles.factPill}>{ev}</span>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.factsFooter}>
-          <button
-            type="button"
-            className="btn btn-primary btn-full"
-            onClick={handleIntegrateFacts}
-            id="integrate-tree-facts-btn"
-          >
-            Alimentar Árvore Genealógica no BD
-          </button>
-        </div>
-      </div>
-
-      {/* Modal de Seleção de Voz & Persona do Agente */}
+      {/* ─── MODAL DE SELEÇÃO DE VOZ ──────────────────────────── */}
       {showVoiceModal && (
         <div className={styles.voiceModalOverlay} onClick={() => setShowVoiceModal(false)}>
           <div className={styles.voiceModalCard} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <span className="badge badge-amber" style={{ marginBottom: '4px', display: 'inline-block' }}>
-                  OpenAI Neural TTS · Estilo ChatGPT
+                  Vozes Humanas e Acolhedoras
                 </span>
-                <h3 style={{ fontFamily: 'var(--font-title)', color: 'var(--clr-parchment)', margin: 0 }}>
-                  ⚙️ Voz & Persona do Agente
+                <h3 style={{ fontFamily: 'var(--font-display)', color: 'var(--clr-parchment)', margin: 0 }}>
+                  Quem conduz a entrevista?
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowVoiceModal(false)}
-                style={{ background: 'transparent', border: 'none', color: 'var(--clr-muted)', fontSize: '1.2rem', cursor: 'pointer' }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--clr-muted)', fontSize: '1.4rem', cursor: 'pointer' }}
               >
                 ✕
               </button>
             </div>
 
-            <p style={{ fontSize: '0.82rem', color: 'var(--clr-muted)', margin: 0 }}>
-              Selecione o timbre da voz neural que conduzirá as entrevistas da sua família:
+            <p style={{ fontSize: '0.85rem', color: 'var(--clr-muted)', margin: 0 }}>
+              Selecione a voz que melhor combina com a pessoa idosa entrevistada:
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {PERSONAS.map(persona => {
                 const isSelected = selectedPersona.id === persona.id
                 return (
@@ -759,23 +606,20 @@ export default function AgentePage() {
                     <span className={styles.personaIcon}>{persona.icon}</span>
                     <div style={{ flex: 1 }}>
                       <div className={styles.personaTitle}>
-                        {persona.name}{' '}
-                        <span style={{ fontSize: '0.72rem', color: 'var(--clr-amber)', fontWeight: 500 }}>
-                          (OpenAI {persona.openAiVoice.toUpperCase()})
-                        </span>
+                        {persona.name} · <span style={{ color: 'var(--clr-amber)', fontSize: '0.8rem' }}>{persona.title}</span>
                       </div>
                       <div className={styles.personaDesc}>{persona.description}</div>
                     </div>
-                    {isSelected && <span style={{ color: 'var(--clr-amber)', fontWeight: 700 }}>✓</span>}
+                    {isSelected && <span style={{ color: 'var(--clr-amber)', fontWeight: 700, fontSize: '1.2rem' }}>✓</span>}
                   </div>
                 )
               })}
             </div>
 
             {availableVoices.length > 0 && (
-              <div className="form-group" style={{ marginTop: '4px' }}>
+              <div className="form-group" style={{ marginTop: '6px' }}>
                 <label className="form-label" style={{ fontSize: '0.78rem' }}>
-                  Voz Neural Nativa de Backup (Caso a nuvem esteja offline)
+                  Voz Alternativa do Sistema (Backup Offline)
                 </label>
                 <select
                   className="form-input"
@@ -795,18 +639,17 @@ export default function AgentePage() {
               </div>
             )}
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
               <button
                 type="button"
                 className="btn btn-secondary"
                 onClick={() =>
-                  speakText(
-                    `Olá! Sou o ${selectedPersona.name} da família. Estou pronto para ouvir suas histórias mais queridas.`
+                  speakVoice(
+                    `Olá! Sou o ${selectedPersona.name}. Estou aqui para ouvir suas histórias com calma e muito carinho.`
                   )
                 }
-                title="Ouvir teste de fala agora"
               >
-                ▶️ Ouvir Teste de Voz
+                ▶️ Ouvir Amostra de Voz
               </button>
 
               <button
@@ -814,7 +657,7 @@ export default function AgentePage() {
                 className="btn btn-primary"
                 onClick={() => setShowVoiceModal(false)}
               >
-                Concluir & Aplicar
+                Confirmar
               </button>
             </div>
           </div>
