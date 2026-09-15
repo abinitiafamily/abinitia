@@ -1,0 +1,26 @@
+{
+  "name": "ABINITIA — Memória Familiar",
+  "short_name": "ABINITIA",
+  "description": "Preserve a memória e a história da sua família através de conversas naturais por voz.",
+  "start_url": "/agente",
+  "id": "/agente",
+  "display": "standalone",
+  "background_color": "#0E0C0A",
+  "theme_color": "#C68B2E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "family", "education"]
+}

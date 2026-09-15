@@ -238,7 +238,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         id="global-agent-fab"
         title="Conversar ou gravar relato com o Agente de Memória"
       >
-        <span className={styles.agentFabIcon}>🎙️</span>
+        <img
+          src="/icons/icon-192.png"
+          alt="Ícone do Agente"
+          width={30}
+          height={30}
+          style={{ borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 6px rgba(0,0,0,0.4)' }}
+        />
         <div className={styles.agentFabLabel}>
           <span className={styles.agentFabTitle}>Guardião IA</span>
           <span className={styles.agentFabSubtitle}>Ouvir & Registrar</span>

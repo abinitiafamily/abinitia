@@ -350,7 +350,13 @@ export default function AgentePage() {
       {/* ─── TOPO LIMPO ─────────────────────────────────────────── */}
       <header className={styles.topNav}>
         <div className={styles.agentIdentity}>
-          <div className={styles.agentAvatarCircle}>{selectedPersona.icon}</div>
+          <div className={styles.agentAvatarCircle}>
+            <img
+              src="/icons/icon-192.png"
+              alt="ABINITIA"
+              className={styles.agentAvatarImg}
+            />
+          </div>
           <div className={styles.agentInfo}>
             <h1>{selectedPersona.name}</h1>
             <div className={styles.agentSubtitle}>
@@ -428,9 +434,11 @@ export default function AgentePage() {
           <div className={styles.orbRing2} />
           <div className={styles.orbRing3} />
           <div className={styles.orbSphere}>
-            <span className={styles.orbIcon}>
-              {sessionState === 'listening' ? '🎙️' : sessionState === 'speaking' ? '🔊' : selectedPersona.icon}
-            </span>
+            <img
+              src="/icons/icon-192.png"
+              alt="ABINITIA — Guardião de Memórias"
+              className={styles.orbImage}
+            />
           </div>
         </div>
 
