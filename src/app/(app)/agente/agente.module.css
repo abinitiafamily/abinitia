@@ -313,3 +313,123 @@
   padding-top: var(--sp-3);
   border-top: 1px solid var(--clr-border);
 }
+
+/* ─── VOICE SELECTOR & AUDIO CONTROLS ─────────────────────── */
+.voiceControlGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.voiceBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(198, 139, 46, 0.12);
+  border: 1px solid rgba(198, 139, 46, 0.3);
+  color: var(--clr-amber-light);
+  padding: 6px 12px;
+  border-radius: var(--rad-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.voiceBtn:hover {
+  background: rgba(198, 139, 46, 0.22);
+  border-color: var(--clr-amber);
+}
+
+.voiceBtnActive {
+  background: var(--clr-amber);
+  color: var(--clr-bark-deep);
+  border-color: var(--clr-amber-light);
+}
+
+.speakBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--clr-amber);
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: transform 0.15s ease;
+}
+
+.speakBtn:hover {
+  transform: scale(1.15);
+}
+
+.audioPlayer {
+  margin-top: 6px;
+  width: 100%;
+  max-width: 320px;
+  height: 36px;
+}
+
+.voiceModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 2, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 120;
+}
+
+.voiceModalCard {
+  width: 100%;
+  max-width: 500px;
+  background: var(--clr-bark);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--rad-xl);
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.personaOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--rad-lg);
+  border: 1.5px solid var(--clr-border);
+  background: rgba(198, 139, 46, 0.04);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.personaOption:hover {
+  background: rgba(198, 139, 46, 0.1);
+  border-color: var(--clr-border-hover);
+}
+
+.personaOptionActive {
+  border-color: var(--clr-amber);
+  background: rgba(198, 139, 46, 0.15);
+}
+
+.personaIcon {
+  font-size: 1.8rem;
+}
+
+.personaTitle {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--clr-parchment);
+  margin-bottom: 2px;
+}
+
+.personaDesc {
+  font-size: 0.75rem;
+  color: var(--clr-muted);
+  line-height: 1.3;
+}
+

@@ -1,4 +1,5 @@
 'use client'
+
 import { useState } from 'react'
 import Link from 'next/link'
 import styles from './pessoas.module.css'
@@ -22,18 +23,64 @@ const EVIDENCE_LABEL: Record<EvidenceStatus, string> = {
 }
 
 export default function PessoasPage() {
+  const [people, setPeople] = useState<Person[]>(MOCK_PEOPLE)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<'ALL' | EvidenceStatus>('ALL')
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [successToast, setSuccessToast] = useState<string | null>(null)
 
-  const filtered = MOCK_PEOPLE.filter(p => {
+  // Formulário de cadastro de nova pessoa
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('Ferraro')
+  const [birthDate, setBirthDate] = useState('')
+  const [birthPlace, setBirthPlace] = useState('')
+  const [occupation, setOccupation] = useState('')
+  const [evidenceStatus, setEvidenceStatus] = useState<EvidenceStatus>('CONFIRMED')
+  const [notes, setNotes] = useState('')
+
+  const filtered = people.filter(p => {
     const fullName = `${p.firstName} ${p.lastName ?? ''}`.toLowerCase()
-    const matchesSearch = fullName.includes(search.toLowerCase()) ||
+    const matchesSearch =
+      fullName.includes(search.toLowerCase()) ||
       (p.occupation && p.occupation.toLowerCase().includes(search.toLowerCase())) ||
       (p.birthPlace && p.birthPlace.toLowerCase().includes(search.toLowerCase()))
     const matchesFilter = filter === 'ALL' || p.evidenceStatus === filter
     return matchesSearch && matchesFilter
   })
+
+  const handleCreatePerson = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!firstName.trim()) return
+
+    const newPerson: Person = {
+      id: `p-${Date.now()}`,
+      familyId: 'fam-001',
+      firstName,
+      lastName: lastName.trim() || undefined,
+      birthDate: birthDate.trim() || undefined,
+      birthPlace: birthPlace.trim() || undefined,
+      occupation: occupation.trim() || undefined,
+      evidenceStatus,
+      notes: notes.trim() || undefined,
+      createdById: 'user-001',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    setPeople(prev => [newPerson, ...prev])
+    setShowAddModal(false)
+
+    // Reset campos
+    setFirstName('')
+    setBirthDate('')
+    setBirthPlace('')
+    setOccupation('')
+    setNotes('')
+
+    setSuccessToast(`✓ ${newPerson.firstName} ${newPerson.lastName || ''} cadastrado com sucesso na árvore!`)
+    setTimeout(() => setSuccessToast(null), 4000)
+  }
 
   return (
     <div className={styles.container}>
@@ -41,13 +88,34 @@ export default function PessoasPage() {
         <div>
           <h1 className={styles.title}>Pessoas da Família</h1>
           <p className={styles.subtitle}>
-            {MOCK_PEOPLE.length} antepassados e familiares documentados com evidências genealógicas.
+            {people.length} antepassados e familiares documentados com evidências genealógicas.
           </p>
         </div>
-        <button className="btn btn-primary" id="add-person-btn">
+        <button
+          className="btn btn-primary"
+          id="add-person-btn"
+          type="button"
+          onClick={() => setShowAddModal(true)}
+        >
           + Cadastrar Pessoa
         </button>
       </div>
+
+      {successToast && (
+        <div
+          style={{
+            padding: '12px 18px',
+            borderRadius: 'var(--radius-md)',
+            background: 'rgba(90, 128, 64, 0.2)',
+            border: '1px solid rgba(90, 128, 64, 0.4)',
+            color: '#7ea462',
+            fontWeight: 500,
+            marginBottom: 'var(--sp-4)',
+          }}
+        >
+          {successToast}
+        </div>
+      )}
 
       <div className={styles.filterBar}>
         <div className={styles.searchBox}>
@@ -64,18 +132,20 @@ export default function PessoasPage() {
 
         <div className={styles.statusPills}>
           <button
+            type="button"
             className={`${styles.pill} ${filter === 'ALL' ? styles.pillActive : ''}`}
             onClick={() => setFilter('ALL')}
           >
-            Todos ({MOCK_PEOPLE.length})
+            Todos ({people.length})
           </button>
           {(['CONFIRMED', 'REPORTED', 'INFERRED', 'INVESTIGATING'] as EvidenceStatus[]).map(status => (
             <button
+              type="button"
               key={status}
               className={`${styles.pill} ${filter === status ? styles.pillActive : ''}`}
               onClick={() => setFilter(status)}
             >
-              {EVIDENCE_LABEL[status]} ({MOCK_PEOPLE.filter(p => p.evidenceStatus === status).length})
+              {EVIDENCE_LABEL[status]} ({people.filter(p => p.evidenceStatus === status).length})
             </button>
           ))}
         </div>
@@ -147,7 +217,135 @@ export default function PessoasPage() {
         })}
       </div>
 
-      {/* Modal / Detail Drawer */}
+      {/* Modal: Cadastrar Nova Pessoa */}
+      {showAddModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowAddModal(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div className={styles.modalTitleArea}>
+                <h2 className={styles.modalTitle}>Cadastrar Nova Pessoa</h2>
+                <p style={{ fontSize: '0.8rem', color: 'var(--clr-text-muted)' }}>
+                  Adicione um antepassado ou familiar à base genealógica.
+                </p>
+              </div>
+              <button
+                type="button"
+                className={styles.closeBtn}
+                onClick={() => setShowAddModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePerson}>
+              <div className={styles.modalBody}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">Nome *</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ex: Giovanni"
+                      value={firstName}
+                      onChange={e => setFirstName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Sobrenome</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ex: Ferraro"
+                      value={lastName}
+                      onChange={e => setLastName(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">Ano / Data de Nascimento</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ex: 1892 ou 14/05/1892"
+                      value={birthDate}
+                      onChange={e => setBirthDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Local de Nascimento</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ex: Nápoles, Itália"
+                      value={birthPlace}
+                      onChange={e => setBirthPlace(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">Profissão / Ocupação</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ex: Ferreiro, Tecelã"
+                      value={occupation}
+                      onChange={e => setOccupation(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Grau de Evidência</label>
+                    <select
+                      className="form-input"
+                      value={evidenceStatus}
+                      onChange={e => setEvidenceStatus(e.target.value as EvidenceStatus)}
+                    >
+                      <option value="CONFIRMED">Confirmado (com certidão)</option>
+                      <option value="REPORTED">Reportado (relato oral)</option>
+                      <option value="INFERRED">Inferido (por contexto)</option>
+                      <option value="INVESTIGATING">Em Investigação</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Anotações & Memórias de Família</label>
+                  <textarea
+                    className="form-input"
+                    rows={3}
+                    placeholder="Detalhes sobre a vida, histórias passadas por parentes, etc..."
+                    value={notes}
+                    onChange={e => setNotes(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.modalFooter}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowAddModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  id="submit-person-btn"
+                >
+                  Salvar Pessoa
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Detalhes da Pessoa Selecionada */}
       {selectedPerson && (
         <div className={styles.modalOverlay} onClick={() => setSelectedPerson(null)}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -161,6 +359,7 @@ export default function PessoasPage() {
                 </span>
               </div>
               <button
+                type="button"
                 className={styles.closeBtn}
                 onClick={() => setSelectedPerson(null)}
               >
@@ -200,11 +399,19 @@ export default function PessoasPage() {
             </div>
 
             <div className={styles.modalFooter}>
-              <button className="btn btn-secondary" onClick={() => setSelectedPerson(null)}>
+              <Link
+                href="/agente"
+                className="btn btn-secondary"
+                id="investigate-with-agent-btn"
+              >
+                🎙️ Investigar com o Agente IA
+              </Link>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => setSelectedPerson(null)}
+              >
                 Fechar
-              </button>
-              <button className="btn btn-primary" id="modal-edit-btn">
-                Editar Registro
               </button>
             </div>
           </div>

@@ -1,4 +1,5 @@
 'use client'
+
 import { useState } from 'react'
 import styles from './investigacoes.module.css'
 
@@ -67,6 +68,15 @@ export default function InvestigacoesPage() {
   const [filter, setFilter] = useState<'ALL' | 'OPEN' | 'INVESTIGATING' | 'RESOLVED'>('ALL')
   const [resolutionText, setResolutionText] = useState('')
   const [resolvedStatus, setResolvedStatus] = useState<string | null>(null)
+  const [showNewModal, setShowNewModal] = useState(false)
+
+  // Campos de nova investigação
+  const [newTitle, setNewTitle] = useState('')
+  const [newPersonName, setNewPersonName] = useState('')
+  const [newType, setNewType] = useState<Investigation['type']>('DIVERGENCE')
+  const [newPriority, setNewPriority] = useState<Investigation['priority']>('HIGH')
+  const [newDescription, setNewDescription] = useState('')
+  const [newHypothesis, setNewHypothesis] = useState('')
 
   const filtered = filter === 'ALL'
     ? investigations
@@ -77,6 +87,37 @@ export default function InvestigacoesPage() {
       inv.id === id ? { ...inv, status: 'RESOLVED' as const } : inv
     ))
     setResolvedStatus('✓ Investigação concluída e registrada no dossiê histórico!')
+    setTimeout(() => setResolvedStatus(null), 3500)
+  }
+
+  const handleCreateInvestigation = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newTitle.trim() || !newDescription.trim()) return
+
+    const newInv: Investigation = {
+      id: `inv-00${investigations.length + 1}`,
+      title: newTitle,
+      personName: newPersonName.trim() || 'Familiar Geral',
+      personId: 'p-gen',
+      type: newType,
+      priority: newPriority,
+      description: newDescription,
+      hypothesis: newHypothesis.trim() || undefined,
+      status: 'OPEN',
+      dateOpened: new Date().toLocaleDateString('pt-BR'),
+    }
+
+    setInvestigations(prev => [newInv, ...prev])
+    setSelectedInv(newInv)
+    setShowNewModal(false)
+
+    // Reset campos
+    setNewTitle('')
+    setNewPersonName('')
+    setNewDescription('')
+    setNewHypothesis('')
+
+    setResolvedStatus(`✓ Investigação "${newInv.title}" aberta com sucesso!`)
     setTimeout(() => setResolvedStatus(null), 3500)
   }
 
@@ -93,7 +134,12 @@ export default function InvestigacoesPage() {
             Rastreamento de lacunas, fontes conflitantes e hipóteses históricas sem apagar registros anteriores.
           </p>
         </div>
-        <button className="btn btn-primary" id="open-investigation-btn">
+        <button
+          className="btn btn-primary"
+          id="open-investigation-btn"
+          type="button"
+          onClick={() => setShowNewModal(true)}
+        >
           + Abrir Nova Investigação
         </button>
       </div>
@@ -107,24 +153,28 @@ export default function InvestigacoesPage() {
       {/* Filter Tabs */}
       <div className={styles.filterTabs}>
         <button
+          type="button"
           className={`${styles.tabBtn} ${filter === 'ALL' ? styles.tabActive : ''}`}
           onClick={() => setFilter('ALL')}
         >
           Todas ({investigations.length})
         </button>
         <button
+          type="button"
           className={`${styles.tabBtn} ${filter === 'INVESTIGATING' ? styles.tabActive : ''}`}
           onClick={() => setFilter('INVESTIGATING')}
         >
           🔍 Em Andamento ({investigations.filter(i => i.status === 'INVESTIGATING').length})
         </button>
         <button
+          type="button"
           className={`${styles.tabBtn} ${filter === 'OPEN' ? styles.tabActive : ''}`}
           onClick={() => setFilter('OPEN')}
         >
           ⚠️ Em Aberto ({investigations.filter(i => i.status === 'OPEN').length})
         </button>
         <button
+          type="button"
           className={`${styles.tabBtn} ${filter === 'RESOLVED' ? styles.tabActive : ''}`}
           onClick={() => setFilter('RESOLVED')}
         >
@@ -224,6 +274,7 @@ export default function InvestigacoesPage() {
                     />
                     <div className={styles.resolutionActions}>
                       <button
+                        type="button"
                         className="btn btn-primary"
                         onClick={() => handleResolve(selectedInv.id)}
                         disabled={!resolutionText.trim()}
@@ -242,6 +293,143 @@ export default function InvestigacoesPage() {
           )}
         </div>
       </div>
+
+      {/* Modal: Nova Investigação */}
+      {showNewModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(10, 5, 2, 0.75)',
+            backdropFilter: 'blur(5px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            zIndex: 110,
+          }}
+          onClick={() => setShowNewModal(false)}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '560px',
+              background: 'var(--clr-bark)',
+              border: '1px solid var(--clr-border)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '24px',
+              boxShadow: 'var(--shadow-lg)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', color: 'var(--clr-parchment)', fontSize: '1.25rem' }}>
+                Abrir Nova Investigação Genealógica
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShowNewModal(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--clr-text-faint)', fontSize: '1.2rem', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateInvestigation}>
+              <div className="form-group" style={{ marginBottom: '12px' }}>
+                <label className="form-label">Título da Divergência / Questão *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="Ex: Divergência no sobrenome de registro do bisavô"
+                  value={newTitle}
+                  onChange={e => setNewTitle(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                <div className="form-group">
+                  <label className="form-label">Antepassado Vinculado</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Ex: Giuseppe Ferraro"
+                    value={newPersonName}
+                    onChange={e => setNewPersonName(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Prioridade</label>
+                  <select
+                    className="form-input"
+                    value={newPriority}
+                    onChange={e => setNewPriority(e.target.value as any)}
+                  >
+                    <option value="HIGH">Alta (Bloqueia ramo da árvore)</option>
+                    <option value="MEDIUM">Média (Lacuna biográfica)</option>
+                    <option value="LOW">Baixa (Curiosidade histórica)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '12px' }}>
+                <label className="form-label">Tipo de Investigação</label>
+                <select
+                  className="form-input"
+                  value={newType}
+                  onChange={e => setNewType(e.target.value as any)}
+                >
+                  <option value="DIVERGENCE">⚖️ Divergência entre Fontes (Datas/Nomes)</option>
+                  <option value="MISSING_DATA">❓ Dado Faltante (Certidão / Óbito)</option>
+                  <option value="HOMONYM">👥 Homônimo Provável</option>
+                  <option value="UNCONFIRMED_ORIGIN">📍 Origem / Cidade não confirmada</option>
+                </select>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '12px' }}>
+                <label className="form-label">Descrição da Lacuna / Fato *</label>
+                <textarea
+                  className="form-input"
+                  rows={3}
+                  placeholder="Descreva o que os documentos ou relatos orais apontam..."
+                  value={newDescription}
+                  onChange={e => setNewDescription(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '20px' }}>
+                <label className="form-label">Hipótese Inicial</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="Ex: Erro de grafia na certidão de imigração ou transliteração"
+                  value={newHypothesis}
+                  onChange={e => setNewHypothesis(e.target.value)}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowNewModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  id="submit-inv-btn"
+                >
+                  Registrar Investigação
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

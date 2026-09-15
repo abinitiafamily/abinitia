@@ -1,4 +1,5 @@
 'use client'
+
 import { useState } from 'react'
 import styles from './livro.module.css'
 import { MOCK_BOOK_CHAPTERS, MOCK_FAMILIES } from '@/lib/mock-data'
@@ -7,17 +8,70 @@ import type { BookChapter } from '@/types'
 export default function LivroPage() {
   const [chapters, setChapters] = useState<BookChapter[]>(MOCK_BOOK_CHAPTERS)
   const [selectedChapter, setSelectedChapter] = useState<BookChapter | null>(MOCK_BOOK_CHAPTERS[0])
-  const family = MOCK_FAMILIES[0]
-  const progress = family.stats?.bookProgress || 72
+  const [family, setFamily] = useState(MOCK_FAMILIES[0])
+  const [progress, setProgress] = useState(family.stats?.bookProgress || 72)
+  const [isCompiling, setIsCompiling] = useState(false)
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
+  const [showPdfModal, setShowPdfModal] = useState(false)
+  const [successToast, setSuccessToast] = useState<string | null>(null)
+  const [isEditingChapter, setIsEditingChapter] = useState(false)
+  const [chapterText, setChapterText] = useState(
+    'Nos últimos anos do século XIX, quando as primeiras notícias da terra além-mar ecoavam pelas colinas ensolaradas de Nápoles, Giuseppe Ferraro reuniu a coragem ancestral de seus antepassados para fincar novas raízes no continente sul-americano.'
+  )
+
+  const handleRecompile = () => {
+    setIsCompiling(true)
+    setTimeout(() => {
+      setIsCompiling(false)
+      setProgress(88)
+      setSuccessToast('✓ Livro recompilado com 14 novos fatos e relatos trazidos pelo Agente IA!')
+      setTimeout(() => setSuccessToast(null), 4000)
+    }, 1500)
+  }
+
+  const handleGeneratePdf = () => {
+    setIsGeneratingPdf(true)
+    setTimeout(() => {
+      setIsGeneratingPdf(false)
+      setShowPdfModal(true)
+    }, 1200)
+  }
+
+  const handleDownloadPdf = () => {
+    setSuccessToast(`📥 Prova editorial Volume I (${family.name}) baixada com sucesso!`)
+    setShowPdfModal(false)
+    setTimeout(() => setSuccessToast(null), 3000)
+  }
+
+  const handleAttachPhoto = () => {
+    setSuccessToast('✓ Fotografia histórica de Nápoles (1887) anexada à prancha do capítulo!')
+    setTimeout(() => setSuccessToast(null), 3500)
+  }
 
   return (
     <div className={styles.container}>
+      {successToast && (
+        <div
+          style={{
+            padding: '12px 18px',
+            borderRadius: 'var(--radius-md)',
+            background: 'rgba(90, 128, 64, 0.2)',
+            border: '1px solid rgba(90, 128, 64, 0.4)',
+            color: '#7ea462',
+            fontWeight: 500,
+            marginBottom: 'var(--sp-4)',
+          }}
+        >
+          {successToast}
+        </div>
+      )}
+
       {/* Book Hero Banner */}
       <div className={styles.heroBanner}>
         <div className={styles.bookCover}>
           <div className={styles.coverSpine} />
           <div className={styles.coverFace}>
-            <div className={styles.coverEmblem}>🌿</div>
+            <div className={styles.coverEmblem}>{family.symbol || '🌿'}</div>
             <h2 className={styles.coverTitle}>Memorial da Família</h2>
             <h3 className={styles.coverSubtitle}>{family.surname}</h3>
             <p className={styles.coverMotto}>"{family.motto || 'Da origem ao legado'}"</p>
@@ -48,11 +102,23 @@ export default function LivroPage() {
           </div>
 
           <div className={styles.heroActions}>
-            <button className="btn btn-primary" id="generate-pdf-btn">
-              📄 Gerar Prova em PDF
+            <button
+              className="btn btn-primary"
+              id="generate-pdf-btn"
+              type="button"
+              onClick={handleGeneratePdf}
+              disabled={isGeneratingPdf}
+            >
+              {isGeneratingPdf ? '⏳ Diagramando PDF...' : '📄 Gerar Prova em PDF'}
             </button>
-            <button className="btn btn-secondary" id="compile-book-btn">
-              ✨ Recompilar com Novos Fatos
+            <button
+              className="btn btn-secondary"
+              id="compile-book-btn"
+              type="button"
+              onClick={handleRecompile}
+              disabled={isCompiling}
+            >
+              {isCompiling ? '✨ Analisando novos relatos...' : '✨ Recompilar com Novos Fatos'}
             </button>
           </div>
         </div>
@@ -96,11 +162,41 @@ export default function LivroPage() {
               </div>
 
               <div className={styles.paperBody}>
-                <p className={styles.paperLead}>
-                  Nos últimos anos do século XIX, quando as primeiras notícias da terra além-mar
-                  ecoavam pelas colinas ensolaradas de Nápoles, Giuseppe Ferraro reuniu a coragem
-                  ancestral de seus antepassados para fincar novas raízes no continente sul-americano.
-                </p>
+                {isEditingChapter ? (
+                  <div style={{ marginBottom: '16px' }}>
+                    <textarea
+                      className="form-input"
+                      rows={6}
+                      value={chapterText}
+                      onChange={e => setChapterText(e.target.value)}
+                      style={{ width: '100%', fontFamily: 'var(--font-serif)', fontSize: '1rem', lineHeight: '1.7' }}
+                    />
+                    <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={() => {
+                          setIsEditingChapter(false)
+                          setSuccessToast('✓ Parágrafo do capítulo atualizado!')
+                          setTimeout(() => setSuccessToast(null), 3000)
+                        }}
+                      >
+                        Salvar Alteração
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        onClick={() => setIsEditingChapter(false)}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className={styles.paperLead}>
+                    {chapterText}
+                  </p>
+                )}
 
                 <p>
                   A viagem no vapor durou vinte e oito dias sobre as águas do Atlântico. Entre malas de couro
@@ -122,10 +218,20 @@ export default function LivroPage() {
               </div>
 
               <div className={styles.paperFooter}>
-                <button className="btn btn-secondary btn-sm" id="edit-chapter-btn">
-                  Editar Capítulo
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  id="edit-chapter-btn"
+                  onClick={() => setIsEditingChapter(prev => !prev)}
+                >
+                  {isEditingChapter ? 'Cancelar Edição' : 'Editar Capítulo'}
                 </button>
-                <button className="btn btn-ghost btn-sm" id="insert-photo-btn">
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  id="insert-photo-btn"
+                  onClick={handleAttachPhoto}
+                >
                   + Anexar Fotografia Antiga
                 </button>
               </div>
@@ -137,6 +243,104 @@ export default function LivroPage() {
           )}
         </div>
       </div>
+
+      {/* Modal: Prévia da Prova em PDF */}
+      {showPdfModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(10, 5, 2, 0.85)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            zIndex: 120,
+          }}
+          onClick={() => setShowPdfModal(false)}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '640px',
+              background: 'var(--clr-bark)',
+              border: '1px solid var(--clr-border)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '28px',
+              boxShadow: 'var(--shadow-lg)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div>
+                <span className="badge badge-olive" style={{ marginBottom: '4px', display: 'inline-block' }}>
+                  Prova Editorial Pronta para Impressão
+                </span>
+                <h2 style={{ fontFamily: 'var(--font-display)', color: 'var(--clr-parchment)', fontSize: '1.3rem' }}>
+                  Memorial da Família {family.name} — Volume I
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPdfModal(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--clr-text-faint)', fontSize: '1.2rem', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div
+              style={{
+                padding: '20px',
+                background: '#FDFBF7',
+                color: '#2D1A08',
+                borderRadius: 'var(--radius-md)',
+                fontFamily: 'var(--font-serif)',
+                maxHeight: '300px',
+                overflowY: 'auto',
+                boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.1)',
+                lineHeight: '1.6',
+                marginBottom: '20px',
+              }}
+            >
+              <div style={{ textAlign: 'center', borderBottom: '1px solid #E0D2BE', paddingBottom: '14px', marginBottom: '14px' }}>
+                <span style={{ fontSize: '2rem' }}>{family.symbol || '🌿'}</span>
+                <h3 style={{ fontSize: '1.4rem', margin: '4px 0', fontWeight: 700 }}>FAMÍLIA {family.name.toUpperCase()}</h3>
+                <p style={{ fontSize: '0.85rem', fontStyle: 'italic', color: '#6A5038' }}>"{family.motto}"</p>
+                <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Edição de Luxo · 2026</span>
+              </div>
+              <p style={{ fontSize: '0.9rem', marginBottom: '10px' }}>
+                <strong>Sumário Geral:</strong>
+              </p>
+              <ul style={{ fontSize: '0.85rem', paddingLeft: '20px', margin: 0 }}>
+                <li>Capítulo I: As Origens em Nápoles e a Travessia do Atlântico (1888)</li>
+                <li>Capítulo II: A Forja de São Paulo e o Ofício da Rua do Comércio (1905)</li>
+                <li>Capítulo III: Cartas Transatlânticas e o Período Entre Guerras</li>
+                <li>Capítulo IV: Ramificações, Casamentos e as Sete Gerações</li>
+              </ul>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowPdfModal(false)}
+              >
+                Fechar
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleDownloadPdf}
+                id="confirm-download-pdf-btn"
+              >
+                📥 Baixar Arquivo PDF de Impressão (38.4 MB)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

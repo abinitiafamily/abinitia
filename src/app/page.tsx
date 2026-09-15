@@ -31,6 +31,16 @@ export default function HomePage() {
           <Link href="/cadastro" className="btn btn-primary btn-lg">Criar minha conta</Link>
           <Link href="/login" className="btn btn-ghost btn-lg">Entrar</Link>
         </div>
+        <div style={{ marginTop: '14px', marginBottom: '8px' }}>
+          <Link
+            href="/agente"
+            className="btn btn-secondary"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.88rem' }}
+          >
+            <span>🎙️</span>
+            <span>Conhecer o Guardião de Memórias IA</span>
+          </Link>
+        </div>
         <p className={styles.hint}>
           Já tem uma família? <Link href="/busca" className={styles.hintLink}>Buscar famílias</Link>
         </p>

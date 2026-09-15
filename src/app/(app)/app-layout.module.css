@@ -300,7 +300,8 @@
     transition: transform var(--dur-med) var(--ease-out);
     box-shadow: var(--shadow-lg);
   }
-  .sidebar.open { transform: translateX(0); }
+  .sidebar.open,
+  .sidebarOpen { transform: translateX(0) !important; }
   .menuBtn { display: flex; }
   .content { padding: var(--sp-6) var(--sp-4); }
 }
@@ -309,3 +310,169 @@
   .topbar { padding: 0 var(--sp-4); }
   .content { padding: var(--sp-4); }
 }
+
+/* ─── MOBILE SIDEBAR OVERLAY ──────────────────────────────── */
+.sidebarOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 2, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 75;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ─── GLOBAL AGENT FLOATING ACTION BUTTON (FAB) ────────────── */
+.agentFab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #C68B2E, #8B5E1A);
+  color: #FFF8EE;
+  border: 1.5px solid rgba(255, 225, 160, 0.4);
+  border-radius: var(--radius-full);
+  box-shadow: 0 8px 24px rgba(198, 139, 46, 0.4), 0 2px 8px rgba(0,0,0,0.5);
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.agentFab:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(198, 139, 46, 0.55), 0 4px 12px rgba(0,0,0,0.6);
+  color: #FFFFFF;
+}
+
+.agentFabIcon {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulseFab 2s infinite ease-in-out;
+}
+
+@keyframes pulseFab {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.agentFabLabel {
+  display: flex;
+  flex-direction: column;
+}
+
+.agentFabTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.agentFabSubtitle {
+  font-size: 0.68rem;
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+/* ─── NOTIFICATIONS DROPDOWN ──────────────────────────────── */
+.notifDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background: var(--clr-bark);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--sp-4);
+  z-index: 100;
+  animation: scaleIn 0.2s ease-out;
+}
+
+.notifHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--clr-border);
+  margin-bottom: var(--sp-3);
+}
+
+.notifTitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--clr-parchment);
+}
+
+.notifList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.notifItem {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-2);
+  border-radius: var(--radius-sm);
+  background: rgba(198, 139, 46, 0.05);
+  font-size: 0.78rem;
+  color: var(--clr-text-muted);
+  line-height: 1.3;
+}
+
+.notifItem:hover {
+  background: rgba(198, 139, 46, 0.1);
+}
+
+/* ─── MODAL OVERLAY & CARD ────────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 2, 0.75);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4);
+  z-index: 110;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modalCard {
+  width: 100%;
+  max-width: 480px;
+  background: var(--clr-bark);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-6);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.modalClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--clr-text-faint);
+  cursor: pointer;
+}
+.modalClose:hover { color: var(--clr-parchment); }
+

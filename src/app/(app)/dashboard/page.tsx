@@ -1,19 +1,52 @@
-import type { Metadata } from 'next'
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
 import styles from './dashboard.module.css'
 import { MOCK_FAMILIES, MOCK_TIMELINE, MOCK_JOIN_REQUESTS, MOCK_BOOK_CHAPTERS, CURRENT_USER } from '@/lib/mock-data'
-
-export const metadata: Metadata = { title: 'Dashboard' }
+import type { JoinRequest } from '@/types'
 
 export default function DashboardPage() {
-  const family = MOCK_FAMILIES[0]
+  const [family] = useState(MOCK_FAMILIES[0])
+  const [pendingRequests, setPendingRequests] = useState<JoinRequest[]>(
+    MOCK_JOIN_REQUESTS.filter(r => r.status === 'PENDING')
+  )
+  const [successToast, setSuccessToast] = useState<string | null>(null)
+
   const stats = family.stats!
   const recentEvents = MOCK_TIMELINE.slice(0, 4)
-  const pendingRequests = MOCK_JOIN_REQUESTS.filter(r => r.status === 'PENDING')
   const bookChapters = MOCK_BOOK_CHAPTERS
+
+  const handleApprove = (reqId: string, userName: string) => {
+    setPendingRequests(prev => prev.filter(r => r.id !== reqId))
+    setSuccessToast(`✓ ${userName} foi aprovado(a) e integrado(a) à árvore familiar com sucesso!`)
+    setTimeout(() => setSuccessToast(null), 4000)
+  }
+
+  const handleReject = (reqId: string, userName: string) => {
+    setPendingRequests(prev => prev.filter(r => r.id !== reqId))
+    setSuccessToast(`Pedido de ${userName} foi recusado.`)
+    setTimeout(() => setSuccessToast(null), 3500)
+  }
 
   return (
     <div className={styles.page}>
+      {successToast && (
+        <div
+          style={{
+            padding: '12px 18px',
+            borderRadius: 'var(--radius-md)',
+            background: 'rgba(90, 128, 64, 0.2)',
+            border: '1px solid rgba(90, 128, 64, 0.4)',
+            color: '#7ea462',
+            fontWeight: 500,
+            marginBottom: 'var(--sp-4)',
+          }}
+        >
+          {successToast}
+        </div>
+      )}
+
       {/* Header */}
       <div className={styles.header}>
         <div>
@@ -56,7 +89,7 @@ export default function DashboardPage() {
           <div className={styles.bookHeader}>
             <div>
               <div className={styles.cardEyebrow}>📚 Livro da Família</div>
-              <h2 className={styles.cardTitle}>Livro Ferraro</h2>
+              <h2 className={styles.cardTitle}>Livro {family.name}</h2>
             </div>
             <Link href="/familia/fam-001/livro" className="btn btn-ghost btn-sm">Ver livro →</Link>
           </div>
@@ -97,8 +130,24 @@ export default function DashboardPage() {
                       <div className={styles.requestMsg}>{req.message?.slice(0, 60)}...</div>
                     </div>
                     <div className={styles.requestActions}>
-                      <button className="btn btn-primary btn-sm" id={`approve-${req.id}`}>✓</button>
-                      <button className="btn btn-ghost btn-sm" id={`reject-${req.id}`}>✕</button>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        id={`approve-${req.id}`}
+                        onClick={() => handleApprove(req.id, req.userName)}
+                        title="Aprovar entrada na família"
+                      >
+                        ✓
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        id={`reject-${req.id}`}
+                        onClick={() => handleReject(req.id, req.userName)}
+                        title="Recusar pedido"
+                      >
+                        ✕
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -150,7 +199,7 @@ export default function DashboardPage() {
       <div className={styles.investigationsCard}>
         <div className={styles.investigationsHeader}>
           <div className={styles.cardTitle}>🔍 Investigações em aberto</div>
-          <Link href="/familia/fam-001/pessoas?filter=inferred" className="btn btn-ghost btn-sm">Ver todas</Link>
+          <Link href="/familia/fam-001/investigacoes" className="btn btn-ghost btn-sm">Ver todas</Link>
         </div>
         <div className={styles.investigationsList}>
           {['Avó materna de Giuseppe', 'Profissão de Rosa antes do casamento', 'Irmãos de Antonio Ferraro', 'Data exata da chegada ao Brasil'].map((inv, i) => (
